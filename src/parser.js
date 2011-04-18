@@ -35,7 +35,7 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.expectIdentifier();
     var clazz = ast.clazz(lexer.token);
     lexer.next();
-    if (lexer.token === symbol.DEF) {
+    while (lexer.token === symbol.DEF) {
       var method = parseMethod();
       clazz.methods[method.name] = method;
     }
@@ -47,8 +47,10 @@ jazz.Parser = function (lexer, symbolTable) {
   function parseMethod() {
     lexer.expectIdentifier();
     var method = ast.method(lexer.token);
+    method.invoke = function () {
+      alert("Invoking method " + method.name);
+    }
     while (lexer.token !== symbol.END) {
-      // TODO
       lexer.next();
     }
     lexer.next();
