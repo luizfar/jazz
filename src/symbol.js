@@ -19,9 +19,12 @@ jazz.symbol = {
   CLASS: "class",
   DEF: "def",
   END: "end",
+  EQUAL: "is",
   IMPORT: "import",
   OR: "or",
-  VAR: "var"
+  VAR: "var",
+  TRUE: "true",
+  FALSE: "false"
 };
 
 (function () {

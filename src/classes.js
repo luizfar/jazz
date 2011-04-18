@@ -64,6 +64,38 @@ jazz.lang = (function () {
       return self.Number.init(_number.value % _params[0].value);
     }
   };
+  self.Number.methods.equals = {
+    params: [self.Number],
+    invoke: function (_number, _params) {
+      return self.Boolean.init(_number.value === _params[0].value);
+    }
+  };
+
+  self.Boolean = {
+    name: "Boolean",
+    methods: {},
+    init: function (_params) {
+      return {
+        clazz: self.Boolean,
+        value: _params,
+        asString: function() {
+          return this.value;
+        }
+      };
+    }
+  };
+  self.Boolean.methods.or = {
+    params: [self.Boolean],
+    invoke: function (_boolean, _params) {
+      return self.Boolean.init(_boolean.value || _params[0].value);
+    }
+  };
+  self.Boolean.methods.and = {
+    params: [self.Boolean],
+    invoke: function (_boolean, _params) {
+      return self.Boolean.init(_boolean.value && _params[0].value);
+    }
+  };
   
   self.String = {
     name: "String",

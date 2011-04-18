@@ -6,6 +6,12 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
   var util = jazz.util;
   var lang = jazz.lang;
 
+  var OR_OPERATOR = [symbol.OR];
+  var OR_OPERATION = ["or"];
+  var AND_OPERATOR = [symbol.AND];
+  var AND_OPERATION = ["and"];
+  var EQUAL_OPERATOR = [symbol.EQUAL];
+  var EQUAL_OPERATION = ["equals"];
   var SUM_OPERATORS = [symbol.ADD, symbol.SUBTRACT];
   var SUM_OPERATIONS = ["add", "subtract"];
   var MULTIPLY_OPERATORS = [symbol.MULTIPLY, symbol.DIVIDE, symbol.REMAINDER];
@@ -39,7 +45,19 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
   }
   
   function evaluateExpression() {
-    return evalSumExpression();
+    return evalOrExpression();
+  }
+  
+  function evalOrExpression() {
+    return binaryExpression(evalAndExpression, OR_OPERATOR, OR_OPERATION, lang.Boolean);
+  }
+  
+  function evalAndExpression() {
+    return binaryExpression(evalEqualExpression, AND_OPERATOR, AND_OPERATION, lang.Boolean);
+  }
+  
+  function evalEqualExpression() {
+    return binaryExpression(evalSumExpression, EQUAL_OPERATOR, EQUAL_OPERATION, lang.Boolean);
   }
   
   function evalSumExpression() {
@@ -83,6 +101,10 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
     if (lexer.tokenIsNumber()) {
       next();
       return jazz.lang.Number.init(util.toNumber(value));
+    }
+    if (value === symbol.TRUE || value === symbol.FALSE) {
+      next();
+      return jazz.lang.Boolean.init(value === symbol.TRUE);
     }
     if (lexer.tokenIsString()) {
       next();
