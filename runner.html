@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script src="lib/jquery.min.js"></script>
+    <script src="src/classes.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/symbol.js"></script>
+    <script src="src/symbolTable.js"></script>
+    <script src="src/lexer.js"></script>
+    <script src="src/ast.js"></script>
+    <script src="src/operations.js"></script>
+    <script src="src/expressionEvaluator.js"></script>
+    <script src="src/parser.js"></script>
+    <script src="src/interpreter.js"></script>
+    <script src="src/jazz.js"></script>
+    
+    <script type="jazz">
+      class Person
+        def greet
+          alert "hey!"
+        end
+      end
+      var p = Person.new
+      p.greet
+      var x = 1 + 1
+      var y = x * 2 - 3 * 2
+      alert y
+    </script>
+    
+    <script type="text/javascript">
+      jazz.run();
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
