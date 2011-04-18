@@ -6,7 +6,7 @@ jazz.SymbolTable = function () {
   
   this.addClass = function(clazz) {
     classes[clazz.name] = {
-      type: jazz.ast.classClass,
+      type: jazz.lang.Class,
       value: clazz
     };
   }

@@ -6,7 +6,7 @@ jazz.Interpreter = function (input) {
   var symbolTable = new jazz.SymbolTable();
   var parser = new jazz.Parser(lexer, symbolTable);
   
-  symbolTable.addClass(jazz.ast.classClass);
+  symbolTable.addClass(jazz.lang.Class);
   
   this.start = function () {
     lexer.next();

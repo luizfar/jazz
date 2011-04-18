@@ -7,8 +7,9 @@ jazz.Lexer = function (_input) {
   var symbol = jazz.symbol;
   
   var SIMPLE_TOKENS = [ symbol.ASSIGN, symbol.LEFT_CUR, symbol.RIGHT_CUR,
-                        symbol.ADD, symbol.SUBTRACT, symbol.MULTIPLY,
-                        symbol.DIVIDE, symbol.REMAINDER, symbol.DOT];
+                        symbol.LEFT_PAR, symbol.RIGHT_PAR, symbol.ADD,
+                        symbol.SUBTRACT, symbol.MULTIPLY, symbol.DIVIDE,
+                        symbol.REMAINDER, symbol.COMMA, symbol.DOT];
 
   this.token = '';
   

@@ -2,28 +2,13 @@ var jazz = jazz || {};
 
 jazz.ast = {
 
-  classClass: {
-    "name": "Class",
-    methods: {
-      "new": {
-        params: [jazz.lang.String],
-        invoke: function (_clazz, _params) {
-          return _clazz.init(_params);
-        }
-      }
-    }
-  },
-
   clazz: function (_name) {
     return {
       "name": _name,
       methods: {},
-      type: jazz.ast.classClass,
+      clazz: jazz.lang.Class,
       init: function (_params) {
-        return {
-          type: this,
-          value: jazz.ast.object(this)
-        };
+        return jazz.ast.object(this);
       }
     };
   },
@@ -38,10 +23,11 @@ jazz.ast = {
   
   object: function (_type) {
     return {
-      type: _type
+      clazz: _type,
+      asString: function() {
+        return _type.asString() + " object";
+      }
     };
   }
   
 };
-
-jazz.ast.classClass.type = jazz.ast.classClass;

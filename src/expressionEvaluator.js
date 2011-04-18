@@ -7,12 +7,12 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
   var lang = jazz.lang;
 
   var SUM_OPERATORS = [symbol.ADD, symbol.SUBTRACT];
-  var SUM_OPERATIONS = [operations.add, operations.subtract];
+  var SUM_OPERATIONS = ["add", "subtract"];
   var MULTIPLY_OPERATORS = [symbol.MULTIPLY, symbol.DIVIDE, symbol.REMAINDER];
-  var MULTIPLY_OPERATIONS = [operations.multiply, operations.divide, operations.remainder];
+  var MULTIPLY_OPERATIONS = ["multiply", "divide", "remainder"];
   
   this.evaluateExpression = function () {
-    return evalSumExpression();
+    return evaluateExpression();
   }
   
   function expression(_type, _value) {
@@ -28,7 +28,7 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
     while (index != -1) {
       lexer.next();
       var otherExpr = primaryExpression();
-      expr = expression(resultingType, operations[index](expr, otherExpr));
+      expr = expr.clazz.methods[operations[index]].invoke(expr, [otherExpr]);
       index = util.indexOf(operators, lexer.token);
     }
     return expr;
@@ -36,6 +36,10 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
   
   function next() {
     lexer.next();
+  }
+  
+  function evaluateExpression() {
+    return evalSumExpression();
   }
   
   function evalSumExpression() {
@@ -51,12 +55,23 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
     
     while (lexer.token === symbol.DOT) {
       lexer.next();
-      var method = expression.type.methods[lexer.token];
+      var method = expression.clazz.methods[lexer.token];
       if (!method) {
         util.error("Undefined method '" + lexer.token + "' for object of type '" + expression.type.name + "'.");
       }
-      expression = method.invoke(expression.value);
       lexer.next();
+      var params;
+      if (lexer.token === symbol.LEFT_PAR) {
+        lexer.next();
+        params = [evaluateExpression()];
+        while (lexer.token === symbol.COMMA) {
+          lexer.next();
+          params.push(evaluateExpression());
+        }
+        lexer.checkToken(symbol.RIGHT_PAR);
+        lexer.next();
+      }
+      expression = method.invoke(expression, params);
     }
     
     return expression;
@@ -67,16 +82,16 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
     
     if (lexer.tokenIsNumber()) {
       next();
-      return expression(lang.Number, util.toNumber(value));
+      return jazz.lang.Number.init(util.toNumber(value));
     }
     if (lexer.tokenIsString()) {
       next();
-      return expression(lang.String, value);
+      return jazz.lang.String.init(value);
     }
     if (lexer.tokenIsIdentifier()) {
       var variable = symbolTable.get(lexer.token);
       lexer.next()
-      return expression(variable.type, variable.value);
+      return variable.value;
     }
   }
 }

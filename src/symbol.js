@@ -2,6 +2,8 @@ var jazz = jazz || {};
 
 jazz.symbol = {
   ASSIGN: "=",
+  LEFT_PAR: "(",
+  RIGHT_PAR: ")",
   LEFT_CUR: "{",
   RIGHT_CUR: "}",
   ADD: "+",
@@ -10,6 +12,7 @@ jazz.symbol = {
   DIVIDE: "/",
   REMAINDER: "%",
   DOT: ".",
+  COMMA: ",",
 
   ALERT: "alert",
   AND: "and",

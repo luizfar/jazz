@@ -7,7 +7,6 @@
     <script src="src/symbolTable.js"></script>
     <script src="src/lexer.js"></script>
     <script src="src/ast.js"></script>
-    <script src="src/operations.js"></script>
     <script src="src/expressionEvaluator.js"></script>
     <script src="src/parser.js"></script>
     <script src="src/interpreter.js"></script>
@@ -28,7 +27,9 @@
       var x = 1 + 1
       var y = x * 2 - 3 * 2
       alert y
+      alert y.add(4).multiply(3)
     </script>
+
     
     <script type="text/javascript">
       jazz.run();

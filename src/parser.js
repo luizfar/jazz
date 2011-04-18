@@ -28,7 +28,7 @@ jazz.Parser = function (lexer, symbolTable) {
   
   function parseAlert() {
     lexer.next();
-    alert(exprEval.evaluateExpression().value);
+    alert(exprEval.evaluateExpression().asString());
   }
     
   function parseClass() {
@@ -49,6 +49,7 @@ jazz.Parser = function (lexer, symbolTable) {
     var method = ast.method(lexer.token);
     method.invoke = function () {
       alert("Invoking method " + method.name);
+      return jazz.lang.Void;
     }
     while (lexer.token !== symbol.END) {
       lexer.next();
@@ -68,8 +69,8 @@ jazz.Parser = function (lexer, symbolTable) {
     if (lexer.token === symbol.ASSIGN) {
       lexer.next();
       var expression = exprEval.evaluateExpression();
-      variable.value = expression.value;
-      variable.type = expression.type;
+      variable.value = expression;
+      variable.type = expression.clazz;
     }
     symbolTable.add(variable);
   }
