@@ -66,10 +66,11 @@ jazz.Lexer = function (_input) {
     }
   };
   
-  this.checkToken = function (expectedToken) {
+  this.checkAndConsumeToken = function (expectedToken) {
     if (this.token !== expectedToken) {
       util.error("'" + expectedToken + "' expected.");
     }
+    this.next();
   };
   
   this.expectIdentifier = function () {

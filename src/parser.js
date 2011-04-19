@@ -27,8 +27,7 @@ jazz.Parser = function (lexer, symbolTable) {
       var method = parseMethod();
       clazz.methods[method.name] = method;
     }
-    lexer.checkToken(symbol.END);
-    lexer.next();
+    lexer.checkAndConsumeToken(symbol.END);
     symbolTable.addClass(clazz);
   }
   

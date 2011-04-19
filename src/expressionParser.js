@@ -165,8 +165,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
         lexer.next();
         params.push(parseExpression());
       }
-      lexer.checkToken(symbol.RIGHT_PAR);
-      lexer.next();
+      lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
     return function () {
       var receiver = expression();
