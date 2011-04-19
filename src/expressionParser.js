@@ -17,23 +17,19 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   var MULTIPLY_OPERATORS = [symbol.MULTIPLY, symbol.DIVIDE, symbol.REMAINDER];
   var MULTIPLY_OPERATIONS = ["multiply", "divide", "remainder"];
   
-  this.parseExpression = function () {
+  this.parseExpressionEvaluator = function () {
     return parseExpression();
   }
   
-  function functionExpression(_function, _param0, _param1, _param2) {
-    return {
-      evaluate: function () {
-        return _function(_param0, _param1, _param2);
-      }
+  function functionExpression(_function, _param) {
+    return function () {
+      return _function(_param);
     };
   }
   
   function constantExpression(_value) {
-    return {
-      evaluate: function () {
-        return _value;
-      }
+    return function () {
+      return _value;
     };
   }
   
@@ -45,11 +41,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       var otherExpr = primaryExpression();
       var firstExpr = expr;
       var correspondingMethodName = operations[index];
-      expr = {
-        evaluate: function() {
-          var firstValue = firstExpr.evaluate();
-          return firstValue.clazz.methods[correspondingMethodName].invoke(firstValue, [otherExpr.evaluate()]);
-        }
+      expr = function() {
+        var firstValue = firstExpr();
+        return firstValue.clazz.methods[correspondingMethodName].invoke(firstValue, [otherExpr()]);
       };
       index = util.indexOf(operators, lexer.token);
     }
@@ -82,26 +76,22 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       lexer.next();
       expression = parseExpression();
     }
-    return {
-      evaluate: function () {
-        var variable = {
-          name: variableName
-        }
-        variable.value = expression != null ? expression.evaluate() : null;
-        variable.type = variable.value.clazz;
-        symbolTable.add(variable);
-        return variable.value;
+    return function () {
+      var variable = {
+        name: variableName
       }
+      variable.value = expression != null ? expression() : null;
+      variable.type = variable.value.clazz;
+      symbolTable.add(variable);
+      return variable.value;
     };
   }
   
   function parseAlert() {
     lexer.next();
     var expression = parseOrExpression();
-    return {
-      evaluate: function () {
-        alert(expression.evaluate().asString());
-      }
+    return function () {
+      alert(expression().asString());
     };
   }
   
@@ -136,10 +126,8 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       case symbol.SUBTRACT:
         lexer.next();
         var primaryExpression = parsePrimaryExpression();
-        expression = {
-          evaluate: function () {
-            return jazz.lang.Number.init(-primaryExpression.evaluate().value);
-          }
+        expression = function () {
+          return jazz.lang.Number.init(-primaryExpression().value);
         };
         break;
 
@@ -169,19 +157,17 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       lexer.checkToken(symbol.RIGHT_PAR);
       lexer.next();
     }
-    return {
-      evaluate: function () {
-        var receiver = expression.evaluate();
-        var method = receiver.clazz.methods[methodName];
-        if (!method) {
-          util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
-        }
-        var paramsValues = [];
-        util.each(params, function (index, paramExpr) {
-          paramsValues.push(paramExpr.evaluate());
-        });
-        return method.invoke(receiver, paramsValues);
+    return function () {
+      var receiver = expression();
+      var method = receiver.clazz.methods[methodName];
+      if (!method) {
+        util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
       }
+      var paramsValues = [];
+      util.each(params, function (index, paramExpr) {
+        paramsValues.push(paramExpr());
+      });
+      return method.invoke(receiver, paramsValues);
     };
   }
   
@@ -203,11 +189,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     if (lexer.tokenIsIdentifier()) {
       var variableName = lexer.token;
       lexer.next();
-      return {
-        evaluate: function () {
-          var variable = symbolTable.get(variableName);
-          return variable.value;
-        }
+      return function () {
+        var variable = symbolTable.get(variableName);
+        return variable.value;
       };
     }
   }

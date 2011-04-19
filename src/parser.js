@@ -14,7 +14,7 @@ jazz.Parser = function (lexer, symbolTable) {
           break;
         
         default:
-          exprParser.parseExpression().evaluate();
+          exprParser.parseExpressionEvaluator()();
       }
     } while (!lexer.eoi());
   }
@@ -38,13 +38,13 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.next();
     method.expressions = [];
     while (lexer.token !== symbol.END) {
-      method.expressions.push(exprParser.parseExpression());
+      method.expressions.push(exprParser.parseExpressionEvaluator());
     }
     lexer.next();
     method.invoke = function () {
       var lastValue = jazz.lang.Void;
       util.each(this.expressions, function (index, expression) {
-        lastValue = expression.evaluate();
+        lastValue = expression();
       });
       return lastValue;
     }
