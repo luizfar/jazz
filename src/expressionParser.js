@@ -1,6 +1,8 @@
 var jazz = jazz || {};
 
 jazz.ExpressionParser = function (lexer, symbolTable) {
+  var classParser = new jazz.ClassParser(lexer, symbolTable, this);
+  
   var symbol = jazz.symbol;
   var operations = jazz.operations;
   var util = jazz.util;
@@ -67,6 +69,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   
   function parseExpression() {
     switch (lexer.token) {
+      case symbol.CLASS:
+        return classParser.parseClass();
+      
       case symbol.ALERT:
         return parseAlert();
       
