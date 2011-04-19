@@ -74,10 +74,10 @@ jazz.Lexer = function (_input) {
   };
   
   this.expectIdentifier = function () {
-    this.next();
     if (!this.tokenIsIdentifier()) {
       util.error("Identifier expected.");
     }
+    return this.token;
   };
   
   this.tokenIsNumber = function () {

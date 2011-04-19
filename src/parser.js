@@ -18,8 +18,9 @@ jazz.Parser = function (lexer, symbolTable) {
       }
     } while (!lexer.eoi());
   }
-    
+  
   function parseClass() {
+    lexer.next();
     lexer.expectIdentifier();
     var clazz = ast.clazz(lexer.token);
     lexer.next();
@@ -32,19 +33,27 @@ jazz.Parser = function (lexer, symbolTable) {
     symbolTable.addClass(clazz);
   }
   
+  function parseParameter(method) {
+    lexer.expectIdentifier();
+    method.params.push(lexer.token);
+    lexer.next();
+  }
+  
   function parseMethod() {
+    lexer.next();
     lexer.expectIdentifier();
     var method = ast.method(lexer.token);
     lexer.next();
     
     method.params = [];
     if (lexer.token === symbol.LEFT_PAR) {
+      lexer.next();
       if (lexer.token !== symbol.RIGHT_PAR) {
-        do {
-          lexer.expectIdentifier();
-          method.params.push(lexer.token);
+        parseParameter(method);
+        while (lexer.token === symbol.COMMA) {
           lexer.next();
-        } while (lexer.token === symbol.COMMA);
+          parseParameter(method);
+        }
       }
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
