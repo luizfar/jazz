@@ -59,11 +59,22 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       case symbol.ALERT:
         return parseAlert();
       
+      case symbol.LOG:
+        return parseLog();
+      
       case symbol.VAR:
         return parseVariableDeclaration();
       
       default:
         return parseOrExpression();
+    }
+  }
+  
+  function parseLog() {
+    lexer.next();
+    var expression = parseOrExpression();
+    return function () {
+      console.log(expression().asString());
     }
   }
   

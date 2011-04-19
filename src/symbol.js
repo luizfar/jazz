@@ -21,6 +21,7 @@ jazz.symbol = {
   END: "end",
   EQUAL: "is",
   IMPORT: "import",
+  LOG: "log",
   OR: "or",
   VAR: "var",
   TRUE: "true",

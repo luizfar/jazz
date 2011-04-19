@@ -13,25 +13,23 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
-      var x = 1
       class Person
         def greet
           var x = "hey!"
-          alert x
+          log x
         end
         def yell
-          alert "YOOOOOOOOOOOOOOOOO"
+          log "YOOOOOOOOOOOOOOOOO"
         end
       end
       var p = Person.new
       p.greet
       p.yell
-      alert x
       var x = 1 + 1
       var y = x * 2 - 3 * 2
-      alert y.add(-4).add(5).multiply(3)
-      alert 1 is 2.subtract(0)
-      alert 1 is 1.1.subtract(0.1)
+      log y.add(-4).add(5).multiply(3)
+      log 1 is 2.subtract(0)
+      log 1 is 1.1.subtract(0.1)
     </script>
 
     
