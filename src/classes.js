@@ -15,6 +15,20 @@ jazz.lang = (function () {
     }
   };
   
+  var nullObject = {
+    asString: function () {
+      return "null";
+    }
+  };
+  
+  self.Null = {
+    name: "Null",
+    clazz: self.Class,
+    init: function () {
+      return nullObject;
+    }
+  };
+  
   self.Void = {
     name: "Void",
     clazz: self.Class
@@ -34,6 +48,7 @@ jazz.lang = (function () {
       };
     }
   };
+  
   self.Number.methods.add = {
     params: [self.Number],
     invoke: function (_number, _params) {

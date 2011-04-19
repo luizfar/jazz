@@ -24,7 +24,7 @@ jazz.ast = {
   object: function (_type) {
     return {
       clazz: _type,
-      asString: function() {
+      asString: function () {
         return _type.asString() + " object";
       }
     };

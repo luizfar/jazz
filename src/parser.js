@@ -39,11 +39,13 @@ jazz.Parser = function (lexer, symbolTable) {
     
     method.params = [];
     if (lexer.token === symbol.LEFT_PAR) {
-      do {
-        lexer.expectIdentifier();
-        method.params.push(lexer.token);
-        lexer.next();
-      } while (lexer.token === symbol.COMMA);
+      if (lexer.token !== symbol.RIGHT_PAR) {
+        do {
+          lexer.expectIdentifier();
+          method.params.push(lexer.token);
+          lexer.next();
+        } while (lexer.token === symbol.COMMA);
+      }
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
     
@@ -58,7 +60,7 @@ jazz.Parser = function (lexer, symbolTable) {
       util.each(method.params, function (index, param) {
         symbolTable.add({
           name: param,
-          value: args[index]
+          value: args[index] ? args[index] : jazz.lang.Null.init()
         });
       });
       var lastValue = jazz.lang.Void;

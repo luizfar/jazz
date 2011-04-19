@@ -160,10 +160,12 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     var params = [];
     if (lexer.token === symbol.LEFT_PAR) {
       lexer.next();
-      params = [parseExpression()];
-      while (lexer.token === symbol.COMMA) {
-        lexer.next();
-        params.push(parseExpression());
+      if (lexer.token !== symbol.RIGHT_PAR) {
+        params = [parseExpression()];
+        while (lexer.token === symbol.COMMA) {
+          lexer.next();
+          params.push(parseExpression());
+        }
       }
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
