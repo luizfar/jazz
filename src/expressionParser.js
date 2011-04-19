@@ -40,14 +40,25 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       lexer.next();
       var otherExpr = primaryExpression();
       var firstExpr = expr;
-      var correspondingMethodName = operations[index];
-      expr = function() {
-        var firstValue = firstExpr();
-        return firstValue.clazz.methods[correspondingMethodName].invoke(firstValue, [otherExpr()]);
-      };
+      expr = createMessageSend(firstExpr, operations[index], [otherExpr]);
       index = util.indexOf(operators, lexer.token);
     }
     return expr;
+  }
+  
+  function createMessageSend(receiverExpression, methodName, params) {
+    return function () {
+      var receiver = receiverExpression();
+      var method = receiver.clazz.methods[methodName];
+      if (!method) {
+        util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
+      }
+      var paramsValues = [];
+      util.each(params, function (index, paramExpr) {
+        paramsValues.push(paramExpr());
+      });
+      return method.invoke(receiver, paramsValues);
+    }
   }
   
   function next() {
@@ -147,13 +158,13 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
       
     while (lexer.token === symbol.DOT) {
-      expression = sendMessageTo(expression);
+      expression = parseMessageSendTo(expression);
     }
     
     return expression;
   }
   
-  function sendMessageTo(expression) {  
+  function parseMessageSendTo(expression) {  
     lexer.next();
     var methodName = lexer.token;
     lexer.next();
@@ -169,18 +180,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       }
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
-    return function () {
-      var receiver = expression();
-      var method = receiver.clazz.methods[methodName];
-      if (!method) {
-        util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
-      }
-      var paramsValues = [];
-      util.each(params, function (index, paramExpr) {
-        paramsValues.push(paramExpr());
-      });
-      return method.invoke(receiver, paramsValues);
-    };
+    return createMessageSend(expression, methodName, params);
   }
   
   function parsePrimaryExpression() {
