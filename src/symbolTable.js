@@ -1,28 +1,58 @@
 var jazz = jazz || {};
 
 jazz.SymbolTable = function () {
-  var classes = {};
-  var variables = {};
+  var scopes = [];
+  var scopeIndex = 0;
+  scopes[scopeIndex] = emptyScope();
+  
+  function emptyScope() {
+    return {
+      classes: {},
+      variables: {}
+    };
+  }
+  
+  function currentScope() {
+    return scopes[scopeIndex];
+  }
   
   this.addClass = function(clazz) {
-    classes[clazz.name] = {
+    currentScope().classes[clazz.name] = {
       type: jazz.lang.Class,
       value: clazz
     };
   }
   
   this.add = function (variable) {
-    variables[variable.name] = variable;
+    if (currentScope().variables[variable.name]) {
+      jazz.util.error("Identifier '" + variable.name + "' already in use.");
+    } else {
+      currentScope().variables[variable.name] = variable;
+    }
   }
   
   this.get = function (identifier) {
-    var variable = variables[identifier];
-    if (variable === undefined) {
-      variable = classes[identifier];
-      if (variable === undefined) {
-        jazz.util.error("Variable '" + identifier + "' undefined.");
+    for (var i = scopeIndex; i >= 0; --i) {
+      var variable = scopes[i].variables[identifier];
+      if (variable) {
+        return variable;
       }
     }
-    return variable;
+    for (var i = scopeIndex; i >= 0; --i) {
+      var clazz = scopes[i].classes[identifier];
+      if (clazz) {
+        return clazz;
+      }
+    }
+    jazz.util.error("Unknown identifier: " + identifier);
+  }
+  
+  this.addScope = function () {
+    scopes[++scopeIndex] = emptyScope();
+  }
+  
+  this.removeScope = function () {
+    delete(scopes[scopeIndex]);
+    scopeIndex--;
   }
 }

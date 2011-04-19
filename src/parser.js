@@ -42,10 +42,12 @@ jazz.Parser = function (lexer, symbolTable) {
     }
     lexer.next();
     method.invoke = function () {
+      symbolTable.addScope();
       var lastValue = jazz.lang.Void;
       util.each(this.expressions, function (index, expression) {
         lastValue = expression();
       });
+      symbolTable.removeScope();
       return lastValue;
     }
     return method;

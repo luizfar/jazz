@@ -13,10 +13,11 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
+      var x = 1
       class Person
         def greet
-          var g = "hey!"
-          alert g
+          var x = "hey!"
+          alert x
         end
         def yell
           alert "YOOOOOOOOOOOOOOOOO"
@@ -24,6 +25,8 @@
       end
       var p = Person.new
       p.greet
+      p.yell
+      alert x
       var x = 1 + 1
       var y = x * 2 - 3 * 2
       alert y.add(-4).add(5).multiply(3)
