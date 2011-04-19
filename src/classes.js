@@ -15,23 +15,21 @@ jazz.lang = (function () {
     }
   };
   
-  var nullObject = {
-    asString: function () {
-      return "null";
-    }
-  };
+  var NULL_OBJECT = {};
   
   self.Null = {
     name: "Null",
     clazz: self.Class,
     init: function () {
-      return nullObject;
+      return NULL_OBJECT;
+    },
+    methods: {
+      toString: {
+        invoke: function (receiver) {
+          return jazz.lang.String.init("null");
+        }
+      }
     }
-  };
-  
-  self.Void = {
-    name: "Void",
-    clazz: self.Class
   };
   
   self.Number = {
@@ -41,14 +39,15 @@ jazz.lang = (function () {
     init: function (_param) {
       return {
         clazz: self.Number,
-        value: _param,
-        asString: function () {
-          return this.value;
-        }
+        value: _param
       };
     }
   };
-  
+  self.Number.methods.toString = {
+    invoke: function (receiver) {
+      return jazz.lang.String.init(receiver.value);
+    }
+  };
   self.Number.methods.add = {
     params: [self.Number],
     invoke: function (_number, _params) {
@@ -92,11 +91,13 @@ jazz.lang = (function () {
     init: function (_params) {
       return {
         clazz: self.Boolean,
-        value: _params,
-        asString: function() {
-          return this.value;
-        }
+        value: _params
       };
+    }
+  };
+  self.Boolean.methods.toString = {
+    invoke: function (receiver) {
+      return jazz.lang.String.init(receiver.value);
     }
   };
   self.Boolean.methods.or = {
@@ -119,11 +120,13 @@ jazz.lang = (function () {
     init: function (_params) {
       return {
         clazz: self.String,
-        value: _params,
-        asString: function() {
-          return this.value;
-        }
+        value: _params
       }
+    }
+  };
+  self.String.methods.toString = {
+    invoke: function (receiver) {
+      return receiver;
     }
   };
   

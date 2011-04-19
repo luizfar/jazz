@@ -72,7 +72,7 @@ jazz.Parser = function (lexer, symbolTable) {
           value: args[index] ? args[index] : jazz.lang.Null.init()
         });
       });
-      var lastValue = jazz.lang.Void;
+      var lastValue = jazz.lang.Null.init();
       util.each(this.expressions, function (expression) {
         lastValue = expression();
       });

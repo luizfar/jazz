@@ -81,11 +81,21 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
   }
   
+  function parseAlert() {
+    lexer.next();
+    var expression = parseOrExpression();
+    return function () {
+      var value = expression();
+      alert(value.clazz.methods["toString"].invoke(value).value);
+    };
+  }
+  
   function parseLog() {
     lexer.next();
     var expression = parseOrExpression();
     return function () {
-      console.log(expression().asString());
+      var value = expression();
+      console.log(value.clazz.methods["toString"].invoke(value).value);
     }
   }
   
@@ -106,14 +116,6 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       variable.type = variable.value.clazz;
       symbolTable.add(variable);
       return variable.value;
-    };
-  }
-  
-  function parseAlert() {
-    lexer.next();
-    var expression = parseOrExpression();
-    return function () {
-      alert(expression().asString());
     };
   }
   
