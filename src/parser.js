@@ -36,14 +36,31 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.expectIdentifier();
     var method = ast.method(lexer.token);
     lexer.next();
+    
+    method.params = [];
+    if (lexer.token === symbol.LEFT_PAR) {
+      do {
+        lexer.expectIdentifier();
+        method.params.push(lexer.token);
+        lexer.next();
+      } while (lexer.token === symbol.COMMA);
+      lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    }
+    
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     method.expressions = [];
     while (lexer.token !== symbol.RIGHT_CUR) {
       method.expressions.push(exprParser.parseExpressionEvaluator());
     }
     lexer.next();
-    method.invoke = function () {
+    method.invoke = function (receiver, args) {
       symbolTable.addScope();
+      util.each(method.params, function (index, param) {
+        symbolTable.add({
+          name: param,
+          value: args[index]
+        });
+      });
       var lastValue = jazz.lang.Void;
       util.each(this.expressions, function (index, expression) {
         lastValue = expression();
