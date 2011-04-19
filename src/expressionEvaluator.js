@@ -69,30 +69,48 @@ jazz.ExpressionEvaluator = function (lexer, symbolTable) {
   }
   
   function evalUnaryExpression() {
-    var expression = parsePrimaryExpression();
-    
+    var expression;
+    switch (lexer.token) {
+      case symbol.ADD:
+        lexer.next();
+        expression = parsePrimaryExpression();
+        break;
+
+      case symbol.SUBTRACT:
+        lexer.next();
+        expression = jazz.lang.Number.init(-(parsePrimaryExpression().value));
+        break;
+
+      default:
+        expression = parsePrimaryExpression();
+    }
+      
     while (lexer.token === symbol.DOT) {
-      lexer.next();
-      var method = expression.clazz.methods[lexer.token];
-      if (!method) {
-        util.error("Undefined method '" + lexer.token + "' for object of type '" + expression.type.name + "'.");
-      }
-      lexer.next();
-      var params;
-      if (lexer.token === symbol.LEFT_PAR) {
-        lexer.next();
-        params = [evaluateExpression()];
-        while (lexer.token === symbol.COMMA) {
-          lexer.next();
-          params.push(evaluateExpression());
-        }
-        lexer.checkToken(symbol.RIGHT_PAR);
-        lexer.next();
-      }
-      expression = method.invoke(expression, params);
+      expression = sendMessageTo(expression);
     }
     
     return expression;
+  }
+  
+  function sendMessageTo(expression) {  
+    lexer.next();
+    var method = expression.clazz.methods[lexer.token];
+    if (!method) {
+      util.error("Undefined method '" + lexer.token + "' for object of type '" + expression.type.name + "'.");
+    }
+    lexer.next();
+    var params;
+    if (lexer.token === symbol.LEFT_PAR) {
+      lexer.next();
+      params = [evaluateExpression()];
+      while (lexer.token === symbol.COMMA) {
+        lexer.next();
+        params.push(evaluateExpression());
+      }
+      lexer.checkToken(symbol.RIGHT_PAR);
+      lexer.next();
+    }
+    return method.invoke(expression, params);
   }
   
   function parsePrimaryExpression() {
