@@ -57,14 +57,14 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.next();
     method.invoke = function (receiver, args) {
       symbolTable.addScope();
-      util.each(method.params, function (index, param) {
+      util.each(method.params, function (param, index) {
         symbolTable.add({
           name: param,
           value: args[index] ? args[index] : jazz.lang.Null.init()
         });
       });
       var lastValue = jazz.lang.Void;
-      util.each(this.expressions, function (index, expression) {
+      util.each(this.expressions, function (expression) {
         lastValue = expression();
       });
       symbolTable.removeScope();

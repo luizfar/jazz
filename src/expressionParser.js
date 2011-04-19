@@ -54,7 +54,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
         util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
       }
       var paramsValues = [];
-      util.each(params, function (index, paramExpr) {
+      util.each(params, function (paramExpr) {
         paramsValues.push(paramExpr());
       });
       return method.invoke(receiver, paramsValues);
