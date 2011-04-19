@@ -23,11 +23,12 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.expectIdentifier();
     var clazz = ast.clazz(lexer.token);
     lexer.next();
+    lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     while (lexer.token === symbol.DEF) {
       var method = parseMethod();
       clazz.methods[method.name] = method;
     }
-    lexer.checkAndConsumeToken(symbol.END);
+    lexer.checkAndConsumeToken(symbol.RIGHT_CUR);
     symbolTable.addClass(clazz);
   }
   
@@ -35,8 +36,9 @@ jazz.Parser = function (lexer, symbolTable) {
     lexer.expectIdentifier();
     var method = ast.method(lexer.token);
     lexer.next();
+    lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     method.expressions = [];
-    while (lexer.token !== symbol.END) {
+    while (lexer.token !== symbol.RIGHT_CUR) {
       method.expressions.push(exprParser.parseExpressionEvaluator());
     }
     lexer.next();
