@@ -45,7 +45,7 @@ jazz.Lexer = function (_input) {
     if (util.isNumber(input[pos])) {
       do {
         this.token += input[pos++];
-      } while (!this.eoi() && (util.isNumber(input[pos]) || input[pos] === symbol.DOT));
+      } while (!this.eoi() && (util.isNumber(input[pos]) || (input[pos] === symbol.DOT && pos < input.length - 1 && util.isNumber(input[pos + 1]))));
       return;
     }
     
