@@ -7,7 +7,7 @@
     <script src="src/symbolTable.js"></script>
     <script src="src/lexer.js"></script>
     <script src="src/ast.js"></script>
-    <script src="src/expressionEvaluator.js"></script>
+    <script src="src/expressionParser.js"></script>
     <script src="src/parser.js"></script>
     <script src="src/interpreter.js"></script>
     <script src="src/jazz.js"></script>
@@ -15,7 +15,8 @@
     <script type="jazz">
       class Person
         def greet
-          alert "hey!"
+          var g = "hey!"
+          alert g
         end
         def yell
           alert "YOOOOOOOOOOOOOOOOO"
@@ -26,7 +27,7 @@
       var x = 1 + 1
       var y = x * 2 - 3 * 2
       alert y.add(-4).add(5).multiply(3)
-      alert 1 is 2.subtract(1)
+      alert 1 is 2.subtract(0)
       alert 1 is 1.1.subtract(0.1)
     </script>
 
