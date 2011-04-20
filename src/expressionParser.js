@@ -51,10 +51,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   function createMessageSend(receiverExpression, methodName, params) {
     return function () {
       var receiver = receiverExpression();
-      var method = receiver.clazz.methods[methodName];
-      if (!method) {
-        util.error("Undefined method '" + methodName + "' for object of type '" + receiver.clazz.name + "'.");
-      }
+      var method = receiver.getMethod(methodName);
       var paramsValues = [];
       util.each(params, function (paramExpr) {
         paramsValues.push(paramExpr());
@@ -87,7 +84,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     var expression = parseOrExpression();
     return function () {
       var value = expression();
-      alert(value.clazz.methods["toString"].invoke(value).value);
+      alert(value.getMethod("toString").invoke(value).value);
     };
   }
   
@@ -96,7 +93,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     var expression = parseOrExpression();
     return function () {
       var value = expression();
-      console.log(value.clazz.methods["toString"].invoke(value).value);
+      console.log(value.getMethod("toString").invoke(value).value);
     }
   }
   
@@ -194,20 +191,75 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       return functionExpression(jazz.lang.String.init, value);
     }
     if (lexer.tokenIsIdentifier()) {
-      var variableName = lexer.token;
+      return parseVariableExpression();
+    }
+    if (lexer.token === symbol.LEFT_CUR) {
+      return parseObjectDefinition();
+    }
+    if (lexer.token === symbol.LEFT_PAR) {
+      return parseAnonymousFunction();
+    }
+  }
+  
+  function parseVariableExpression() {
+    var variableName = lexer.token;
+    lexer.next();
+    if (lexer.token === symbol.ASSIGN) {
       lexer.next();
-      if (lexer.token === symbol.ASSIGN) {
-        lexer.next();
-        var expression = parseExpression();
-        return function () {
-          var variable = symbolTable.getOrCreate(variableName);
-          variable.value = expression();
-        };
-      }
+      var expression = parseExpression();
       return function () {
-        var variable = symbolTable.get(variableName);
-        return variable.value;
+        var variable = symbolTable.getOrCreate(variableName);
+        variable.value = expression();
       };
     }
+    return function () {
+      var variable = symbolTable.get(variableName);
+      return variable.value;
+    };
+  }
+  
+  function parseObjectDefinition() {
+    lexer.next();
+    var properties = {};
+    while (lexer.token !== symbol.RIGHT_CUR) {
+      lexer.expectIdentifier();
+      var propertyName = lexer.token;
+      lexer.next();
+      lexer.checkAndConsumeToken(symbol.ASSIGN);
+      properties[propertyName] = parseExpression();
+    }
+    lexer.next();
+    return function () {
+      var object = jazz.lang.Object.init(jazz.lang.Object);
+      object.properties = properties;
+      for (property in properties) {
+        object.properties[property] = object.properties[property]();
+      }
+      return object;
+    };
+  }
+  
+  function parseAnonymousFunction() {
+    lexer.next();
+    lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    var _function = jazz.lang.Function.init("Object[Function]", []);
+    var expressions = [];
+    lexer.checkAndConsumeToken(symbol.LEFT_CUR);
+    while (lexer.token !== symbol.RIGHT_CUR) {
+      expressions.push(parseExpression());
+    }
+    lexer.next();
+    _function.invoke = function (receiver, args) {
+      symbolTable.addScope();
+      var lastValue = jazz.lang.Null.init();
+      util.each(expressions, function (expression) {
+        lastValue = expression();
+      });
+      symbolTable.removeScope();
+      return lastValue;
+    }
+    return function () {
+      return _function;
+    };
   }
 }

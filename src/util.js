@@ -4,6 +4,7 @@ jazz.util = (function () {
   
   self.error = function (errorMessage) {
     console.error(errorMessage);
+    throw errorMessage;
   };
   
   self.each = function (array, callback) {

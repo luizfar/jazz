@@ -5,6 +5,7 @@ jazz.Lexer = function (_input) {
   var input = trim(_input) + "\0";
   var pos = 0;
   var symbol = jazz.symbol;
+  var tokenIsString = false;
   
   var SIMPLE_TOKENS = [ symbol.ASSIGN, symbol.LEFT_CUR, symbol.RIGHT_CUR,
                         symbol.LEFT_PAR, symbol.RIGHT_PAR, symbol.ADD,
@@ -24,6 +25,10 @@ jazz.Lexer = function (_input) {
   function isValidChar(ch) {
     return ch && ch.match("[A-Za-z\"_]");
   }
+  
+  function isNumber(ch) {
+    return ch && ch.match("[0-9]");
+  }
 
   this.skipBlank = function () {
     while (!this.eoi() && isBlank(input[pos])) pos++;
@@ -36,37 +41,43 @@ jazz.Lexer = function (_input) {
   this.next = function () {
     this.skipBlank();
     this.token = "";
+    tokenIsString = false;
 
     if (util.contains(SIMPLE_TOKENS, input[pos])) {
         this.token = input[pos++];
         return;
     }
     
-    if (util.isNumber(input[pos])) {
+    if (isNumber(input[pos])) {
       do {
         this.token += input[pos++];
-      } while (!this.eoi() && (util.isNumber(input[pos]) || (input[pos] === symbol.DOT && pos < input.length - 1 && util.isNumber(input[pos + 1]))));
+      } while (!this.eoi() && (isNumber(input[pos]) || (input[pos] === symbol.DOT && pos < input.length - 1 && isNumber(input[pos + 1]))));
       return;
     }
     
     if (input[pos] === "\"") {
+      tokenIsString = true;
+      pos++;
       do {
         this.token += input[pos++];
       } while (!this.eoi() && input[pos] != '\n' && input[pos] != "\"");
-      if (input[pos] === "\"") {
-        this.token += input[pos++];
-      } else {
+      if (input[pos] !== "\"") {
         util.error("String end expected.");
       }
+      pos++;
       return;
     }
     
-    while (!this.eoi() && isValidChar(input[pos])) {
+    if (!this.eoi() && isValidChar(input[pos])) {
       this.token += input[pos++];
+      while (!this.eoi() && (isValidChar(input[pos]) || isNumber(input[pos]))) {
+        this.token += input[pos++];
+      }
     }
   };
   
   this.checkAndConsumeToken = function (expectedToken) {
+    tokenIsString = false;
     if (this.token !== expectedToken) {
       util.error("'" + expectedToken + "' expected.");
     }
@@ -81,15 +92,15 @@ jazz.Lexer = function (_input) {
   };
   
   this.tokenIsNumber = function () {
-    return util.isNumber(this.token)
+    return util.isNumber(this.token) && !tokenIsString;
   };
   
   this.tokenIsString = function () {
-    return this.token[0] === this.token[this.token.length - 1] && this.token[0] === '"';
+    return tokenIsString;
   };
   
   this.tokenIsIdentifier = function () {
-    return !this.tokenIsNumber() && !this.tokenIsString() && !util.contains(jazz.symbol.allSymbols, this.token);
+    return !this.tokenIsNumber() && !this.tokenIsString() && !util.contains(jazz.symbol.allSymbols, this.token) && !tokenIsString;
   }
   
   this.position = function () {
