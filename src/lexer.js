@@ -22,7 +22,7 @@ jazz.Lexer = function (_input) {
   }
   
   function isValidChar(ch) {
-    return ch && ch.match("[A-Za-z\"]");
+    return ch && ch.match("[A-Za-z\"_]");
   }
 
   this.skipBlank = function () {

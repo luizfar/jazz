@@ -10,6 +10,15 @@ jazz.ClassParser = function (lexer, symbolTable, exprParser) {
     lexer.expectIdentifier();
     var clazz = ast.clazz(lexer.token);
     lexer.next();
+    if (lexer.token === symbol.LEFT_PAR) {
+      do {
+        lexer.next();
+        lexer.expectIdentifier();
+        clazz.properties.push(lexer.token);
+        lexer.next();
+      } while (lexer.token === symbol.COMMA);
+      lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    }
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     while (lexer.token === symbol.DEF) {
       var method = parseMethod();
@@ -51,7 +60,7 @@ jazz.ClassParser = function (lexer, symbolTable, exprParser) {
       util.each(method.params, function (param, index) {
         symbolTable.add({
           name: param,
-          value: args[index] ? args[index] : jazz.lang.Null.init()
+          value: typeof args[index] !== "undefined" ? args[index] : jazz.lang.Null.init()
         });
       });
       var lastValue = jazz.lang.Null.init();

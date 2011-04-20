@@ -165,29 +165,41 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
       
     while (lexer.token === symbol.DOT) {
-      expression = parseMessageSendTo(expression);
+      expression = parseAccessToProperty(expression);
     }
     
     return expression;
   }
   
-  function parseMessageSendTo(expression) {  
+  function parseAccessToProperty(expression) {  
     lexer.next();
-    var methodName = lexer.token;
+    var propertyName = lexer.token;
+    lexer.next();
+    if (lexer.token === symbol.LEFT_PAR) {
+      return parseMessageSend(expression, propertyName);
+    }
+    return function () {
+      var object = expression();
+      var property = object.attributes[propertyName];
+      if (!property) {
+        util.error("Object of class '" + object.clazz.name + "' has no property named '" + propertyName + "'");
+      }
+      return property;
+    };
+  }
+  
+  function parseMessageSend(receiverExpression, methodName) {
     lexer.next();
     var params = [];
-    if (lexer.token === symbol.LEFT_PAR) {
-      lexer.next();
-      if (lexer.token !== symbol.RIGHT_PAR) {
-        params = [parseExpression()];
-        while (lexer.token === symbol.COMMA) {
-          lexer.next();
-          params.push(parseExpression());
-        }
+    if (lexer.token !== symbol.RIGHT_PAR) {
+      params = [parseExpression()];
+      while (lexer.token === symbol.COMMA) {
+        lexer.next();
+        params.push(parseExpression());
       }
-      lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
-    return createMessageSend(expression, methodName, params);
+    lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    return createMessageSend(receiverExpression, methodName, params);
   }
   
   function parsePrimaryExpression() {

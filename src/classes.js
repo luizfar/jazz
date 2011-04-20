@@ -10,8 +10,8 @@ jazz.lang = (function () {
   self.Class.clazz = self.Class;
   self.Class.methods["new"] = {
     params: [],
-    invoke: function (_clazz, _params) {
-      return _clazz.init(_params);
+    invoke: function (clazz, params) {
+      return clazz.init(params);
     }
   };
   

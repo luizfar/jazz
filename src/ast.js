@@ -2,14 +2,22 @@ var jazz = jazz || {};
 
 jazz.ast = {
 
-  clazz: function (_name) {
+  clazz: function (name) {
     var newClazz = {
-      name: _name,
+      name: name,
       methods: {},
-      clazz: jazz.lang.Class,
-      init: function (_params) {
-        return jazz.ast.object(this);
-      }
+      properties: [],
+      clazz: jazz.lang.Class
+    };
+    newClazz.init = function (params) {
+      var object = {
+        clazz: newClazz,
+        attributes: {}
+      };
+      jazz.util.each(newClazz.properties, function (property, index) {
+        object.attributes[property] = typeof params[index] !== "undefined" ? params[index] : jazz.lang.Null.init();
+      });
+      return object;
     };
     newClazz.methods.toString = jazz.ast.method("toString", undefined, function (receiver) {
       return jazz.lang.String.init("Object[" + newClazz.name + "]");
@@ -18,17 +26,18 @@ jazz.ast = {
     return newClazz;
   },
   
-  method: function (_name, _params, _invoke) {
+  variable: function (name, clazz) {
     return {
-      name: _name,
-      params: _params,
-      invoke: _invoke
+      name: name,
+      clazz: clazz
     };
   },
   
-  object: function (_type) {
+  method: function (name, params, invoke) {
     return {
-      clazz: _type
+      name: name,
+      params: params,
+      invoke: invoke
     };
   }
   
