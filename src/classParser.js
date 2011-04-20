@@ -9,15 +9,6 @@ jazz.ClassParser = function (lexer, symbolTable, exprParser) {
     lexer.expectIdentifier();
     var clazz = jazz.lang.Class.init(lexer.token);
     lexer.next();
-    if (lexer.token === symbol.LEFT_PAR) {
-      do {
-        lexer.next();
-        lexer.expectIdentifier();
-        clazz.members.push(lexer.token);
-        lexer.next();
-      } while (lexer.token === symbol.COMMA);
-      lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
-    }
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     while (lexer.token === symbol.DEF) {
       var method = parseMethod();

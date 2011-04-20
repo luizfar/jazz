@@ -13,7 +13,7 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
-      class Person(_name) {
+      class Person {
         def greet() {
           x = "hey!"
           log x
@@ -22,8 +22,7 @@
           log what
         }
       }
-      p = Person.new("joao")
-      log p._name
+      p = Person.new()
       p.greet()
       log p.toString()
       x = 1 + 1
