@@ -180,7 +180,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
     return function () {
       var object = expression();
-      var property = object.attributes[propertyName];
+      var property = object.properties[propertyName];
       if (!property) {
         util.error("Object of class '" + object.clazz.name + "' has no property named '" + propertyName + "'");
       }

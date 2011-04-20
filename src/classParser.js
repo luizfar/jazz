@@ -1,20 +1,19 @@
 var jazz = jazz || {};
 
 jazz.ClassParser = function (lexer, symbolTable, exprParser) {  
-  var ast = jazz.ast;
   var util = jazz.util;
   var symbol = jazz.symbol;
   
   this.parseClass = function () {
     lexer.next();
     lexer.expectIdentifier();
-    var clazz = ast.clazz(lexer.token);
+    var clazz = jazz.lang.Class.init(lexer.token);
     lexer.next();
     if (lexer.token === symbol.LEFT_PAR) {
       do {
         lexer.next();
         lexer.expectIdentifier();
-        clazz.properties.push(lexer.token);
+        clazz.members.push(lexer.token);
         lexer.next();
       } while (lexer.token === symbol.COMMA);
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
@@ -33,7 +32,7 @@ jazz.ClassParser = function (lexer, symbolTable, exprParser) {
   function parseMethod() {
     lexer.next();
     lexer.expectIdentifier();
-    var method = ast.method(lexer.token);
+    var method = jazz.lang.Function.init(lexer.token);
     lexer.next();
     
     method.params = [];
