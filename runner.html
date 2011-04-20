@@ -12,22 +12,22 @@
     <script src="src/interpreter.js"></script>
     <script src="src/jazz.js"></script>
     
-    <script type="jazz">    
+    <script type="jazz">
       class Person(_name) {
         def greet() {
-          var x = "hey!"
+          x = "hey!"
           log x
         }
         def yell(what) {
           log what
         }
       }
-      var p = Person.new("joao")
+      p = Person.new("joao")
       log p._name
       p.greet()
       log p.toString()
-      var x = 1 + 1
-      var y = x * 2 - 3 * 2
+      x = 1 + 1
+      y = x * 2 - 3 * 2
       log y.add(-4).add(5).multiply(3)
       log 1 is 2.subtract(0)
       log 1 is 1.1.subtract(0.1)

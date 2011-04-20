@@ -77,13 +77,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       
       case symbol.LOG:
         return parseLog();
-      
-      case symbol.VAR:
-        return parseVariableDeclaration();
-      
-      default:
-        return parseOrExpression();
     }
+    
+    return parseOrExpression();
   }
   
   function parseAlert() {
@@ -102,26 +98,6 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       var value = expression();
       console.log(value.clazz.methods["toString"].invoke(value).value);
     }
-  }
-  
-  function parseVariableDeclaration() {
-    lexer.next();
-    var variableName = lexer.token;
-    lexer.next();
-    var expression = null;
-    if (lexer.token === symbol.ASSIGN) {
-      lexer.next();
-      expression = parseExpression();
-    }
-    return function () {
-      var variable = {
-        name: variableName
-      }
-      variable.value = expression != null ? expression() : null;
-      variable.type = variable.value.clazz;
-      symbolTable.add(variable);
-      return variable.value;
-    };
   }
   
   function parseOrExpression() {
@@ -220,6 +196,14 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     if (lexer.tokenIsIdentifier()) {
       var variableName = lexer.token;
       lexer.next();
+      if (lexer.token === symbol.ASSIGN) {
+        lexer.next();
+        var expression = parseExpression();
+        return function () {
+          var variable = symbolTable.getOrCreate(variableName);
+          variable.value = expression();
+        };
+      }
       return function () {
         var variable = symbolTable.get(variableName);
         return variable.value;

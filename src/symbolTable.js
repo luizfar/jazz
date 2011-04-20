@@ -21,7 +21,7 @@ jazz.SymbolTable = function () {
       type: jazz.lang.Class,
       value: clazz
     };
-  }
+  };
   
   this.add = function (variable) {
     if (currentScope().variables[variable.name]) {
@@ -29,6 +29,16 @@ jazz.SymbolTable = function () {
     } else {
       currentScope().variables[variable.name] = variable;
     }
+  };
+  
+  this.getOrCreate = function (variableName) {
+    var scope = currentScope();
+    var variable = scope.variables[variableName];
+    if (!variable) {
+      variable = { name: variableName, value: jazz.lang.Null.init() };
+      scope.variables[variableName] = variable;
+    }
+    return variable;
   }
   
   this.get = function (identifier) {
@@ -45,14 +55,14 @@ jazz.SymbolTable = function () {
       }
     }
     jazz.util.error("Unknown identifier: " + identifier);
-  }
+  };
   
   this.addScope = function () {
     scopes[++scopeIndex] = emptyScope();
-  }
+  };
   
   this.removeScope = function () {
     delete(scopes[scopeIndex]);
     scopeIndex--;
-  }
+  };
 }

@@ -23,7 +23,6 @@ jazz.symbol = {
   IMPORT: "import",
   LOG: "log",
   OR: "or",
-  VAR: "var",
   TRUE: "true",
   FALSE: "false"
 };
