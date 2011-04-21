@@ -1,5 +1,16 @@
 var jazz = jazz || {};
 
+if (!window.console) {
+  window.console = {
+    log: function (text) {
+      return false;
+    },
+    error: function (text) {
+      return false;
+    }
+  };
+}
+
 jazz.execute = function (code) {
   var interpreter = new jazz.Interpreter(code);
   interpreter.start();

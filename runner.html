@@ -26,13 +26,13 @@
       log p.name
       log p.age
       log p.greet()
-      log p.toString()
+      log p.asString()
       
       class Person {}
       log "Person : " + Person.name()
-      log "Class Person : " + Person.toString()
+      log "Class Person : " + Person.asString()
       p2 = Person.new()
-      log "Object[Person] : " + p2.toString()
+      log "Object[Person] : " + p2.asString()
       
       x = 1 + 1
       y = x * 2 - 3 * 2

@@ -7,7 +7,7 @@ jazz.lang.Object = {
   members: {
     properties: [],
     methods: {
-      toString: {
+      asString: {
         invoke: function (receiver) {
           return jazz.lang.String.init("Object[" + receiver.clazz.name + "]");
         }
@@ -31,9 +31,9 @@ jazz.lang.Object = {
       },
       getMethod: function (identifier) {
         var method = newObject.properties[identifier];
-        if (!method || !method.invoke) {
+        if (!method) {
           method = newObject.clazz.getMemberMethod(identifier);
-          if (!method || !method.invoke) {
+          if (!method) {
             jazz.util.error("Object of class '" + clazz.name + "' has no method named '" + identifier + "'.");
           }
         }
@@ -71,7 +71,7 @@ jazz.lang.Class = {
           return jazz.lang.String.init(clazz.name);
         }
       },
-      toString: {
+      asString: {
         invoke: function (clazz) {
           return jazz.lang.String.init("Class " + clazz.name);
         }
@@ -79,11 +79,7 @@ jazz.lang.Class = {
     }
   },
   getMemberMethod: function (identifier) {
-    var method = jazz.lang.Class.members.methods[identifier];
-    if (!method || !method.invoke) {
-      method = jazz.lang.Object.getMemberMethod(identifier);
-    }
-    return method;
+    return jazz.lang.Class.members.methods[identifier] || jazz.lang.Object.getMemberMethod(identifier);
   },
   init: function (name) {
     var newClass = jazz.lang.Object.init(jazz.lang.Class);
@@ -125,7 +121,7 @@ jazz.lang.Function.init = function (name, invoke) {
 
 jazz.lang.Null = jazz.lang.Class.init("Null");
 jazz.lang.Null.NULL_OBJECT = jazz.lang.Object.init(jazz.lang.Null);
-jazz.lang.Null.NULL_OBJECT.properties.toString = jazz.lang.Function.init("toString", function () {
+jazz.lang.Null.NULL_OBJECT.properties.asString = jazz.lang.Function.init("asString", function () {
   return jazz.lang.String.init("null");
 });
 jazz.lang.Null.init = function () {
@@ -138,9 +134,9 @@ jazz.lang.Number.init = function (params) {
   number.value = params;
   return number;
 };
-jazz.lang.Number.members.methods.toString = {
+jazz.lang.Number.members.methods.asString = {
   invoke: function (receiver) {
-    return jazz.lang.String.init(receiver.value);
+    return jazz.lang.String.init(receiver.value.toString());
   }
 };
 jazz.lang.Number.members.methods.add = {
@@ -168,6 +164,19 @@ jazz.lang.Number.members.methods.remainder = {
     return jazz.lang.Number.init(number.value % params[0].value);
   }
 };
+jazz.lang.Number.METHODS_MAP = {
+  "+": "add",
+  "-": "subtract",
+  "*": "multiply",
+  "/": "divide",
+  "%": "remainder"
+};
+jazz.lang.Number.originalGetMemberMethod = jazz.lang.Number.getMemberMethod;
+jazz.lang.Number.getMemberMethod = function (identifier) {
+  var newIdentifier = jazz.lang.Number.METHODS_MAP[identifier];
+  identifier = newIdentifier || identifier;
+  return jazz.lang.Number.originalGetMemberMethod(identifier);
+};
 jazz.lang.Number.members.methods.equals = {
   invoke: function (number, params) {
     return jazz.lang.Boolean.init(number.value === params[0].value);
@@ -182,9 +191,9 @@ jazz.lang.Boolean.FALSE.value = false;
 jazz.lang.Boolean.init = function (params) {
   return params ? jazz.lang.Boolean.TRUE : jazz.lang.Boolean.FALSE;
 };
-jazz.lang.Boolean.members.methods.toString = {
+jazz.lang.Boolean.members.methods.asString = {
   invoke: function (receiver) {
-    return jazz.lang.String.init(receiver.value);
+    return jazz.lang.String.init(receiver.value.toString());
   }
 };
 jazz.lang.Boolean.members.methods.or = {
@@ -206,7 +215,7 @@ jazz.lang.String.init = function (params) {
   str.value = params;
   return str;
 };
-jazz.lang.String.members.methods.toString = {
+jazz.lang.String.members.methods.asString = {
   invoke: function (receiver) {
     return receiver;
   }

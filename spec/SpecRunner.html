@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+  <link rel="stylesheet" type="text/css" href="../lib/jasmine/jasmine.css">
+  <script type="text/javascript" src="../lib/jasmine/jasmine.js"></script>
+  <script type="text/javascript" src="../lib/jasmine/jasmine-html.js"></script>
+
+  <!-- include source files here... -->
+  <script src="../lib/jquery.min.js"></script>
+  <script src="../src/bootstrap.js"></script>
+  <script src="../src/util.js"></script>
+  <script src="../src/symbol.js"></script>
+  <script src="../src/symbolTable.js"></script>
+  <script src="../src/lexer.js"></script>
+  <script src="../src/classParser.js"></script>
+  <script src="../src/expressionParser.js"></script>
+  <script src="../src/parser.js"></script>
+  <script src="../src/interpreter.js"></script>
+  <script src="../src/jazz.js"></script>
+
+  <script src="SpecHelper.js"></script>
+
+  <!-- include spec files here... -->
+  <script src="jazz.literals.spec.js"></script>
+  <script src="jazz.operations.spec.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+  jasmine.getEnv().execute();
+</script>
+
+</body>
+</html>

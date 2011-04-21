@@ -84,7 +84,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     var expression = parseOrExpression();
     return function () {
       var value = expression();
-      alert(value.getMethod("toString").invoke(value).value);
+      alert(value.getMethod("asString").invoke(value).value);
     };
   }
   
@@ -93,7 +93,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     var expression = parseOrExpression();
     return function () {
       var value = expression();
-      console.log(value.getMethod("toString").invoke(value).value);
+      console.log(value.getMethod("asString").invoke(value).value);
     }
   }
   
