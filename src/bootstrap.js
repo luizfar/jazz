@@ -11,6 +11,11 @@ jazz.lang.Object = {
         invoke: function (receiver) {
           return jazz.lang.String.init("Object[" + receiver.clazz.name + "]");
         }
+      },
+      equals: {
+        invoke: function (receiver, param) {
+          return jazz.lang.Boolean.init(receiver === param);
+        }
       }
     }
   },

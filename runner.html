@@ -29,16 +29,16 @@
       log p.toString()
       
       class Person {}
-      log Person.name()
-      log Person.toString()
+      log "Person : " + Person.name()
+      log "Class Person : " + Person.toString()
       p2 = Person.new()
-      log "New person: " + p2.toString()
+      log "Object[Person] : " + p2.toString()
       
       x = 1 + 1
       y = x * 2 - 3 * 2
-      log y.add(-4).add(5).multiply(3)
-      log 1 is 2.subtract(0)
-      log 1 is 1.1.subtract(0.1)
+      log "-3 : " + y.add(-4).add(5).multiply(3)
+      log "false : "  + (1 is 2.subtract(0))
+      log "true : " + (1 is 1.1.subtract(0.1))
     </script>
     
     <script type="text/javascript">

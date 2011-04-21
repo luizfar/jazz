@@ -197,7 +197,10 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       return parseObjectDefinition();
     }
     if (lexer.token === symbol.LEFT_PAR) {
-      return parseAnonymousFunction();
+      if (lexer.isLeftCurAfterNextMatchingRightPar()) {
+        return parseAnonymousFunction();
+      }
+      return parseParenthesisExpression();
     }
   }
   
@@ -242,7 +245,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   function parseAnonymousFunction() {
     lexer.next();
     lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
-    var _function = jazz.lang.Function.init("Object[Function]", []);
+    var _function = jazz.lang.Function.init("Object[Function]");
     var expressions = [];
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     while (lexer.token !== symbol.RIGHT_CUR) {
@@ -260,6 +263,15 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
     return function () {
       return _function;
+    };
+  }
+  
+  function parseParenthesisExpression() {
+    lexer.next();
+    var expression = parseExpression();
+    lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    return function () {
+      return expression();
     };
   }
 }

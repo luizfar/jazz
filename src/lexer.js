@@ -30,16 +30,25 @@ jazz.Lexer = function (_input) {
     return ch && ch.match("[0-9]");
   }
 
-  this.skipBlank = function () {
-    while (!this.eoi() && isBlank(input[pos])) pos++;
+  function increaseWhileBlank(position) {
+    while (!eoi(position) && isBlank(input[position])) position++;
+    return position;
+  }
+
+  function skipBlank() {
+    pos = increaseWhileBlank(pos);
+  };
+  
+  function eoi(position) {
+    return position > input.length || input[position] === "\0";
   };
   
   this.eoi = function () {
-    return pos > input.length || input[pos] === "\0";
-  };
+    return eoi(pos);
+  }
   
   this.next = function () {
-    this.skipBlank();
+    skipBlank();
     this.token = "";
     tokenIsString = false;
 
@@ -101,7 +110,19 @@ jazz.Lexer = function (_input) {
   
   this.tokenIsIdentifier = function () {
     return !this.tokenIsNumber() && !this.tokenIsString() && !util.contains(jazz.symbol.allSymbols, this.token) && !tokenIsString;
-  }
+  };
+  
+  this.isLeftCurAfterNextMatchingRightPar = function () {
+    var tempPos = pos;
+    var leftParCount = 1;
+    while (!eoi(tempPos) && leftParCount != 0) {
+      if (input[tempPos] === symbol.LEFT_PAR) leftParCount++;
+      if (input[tempPos] === symbol.RIGHT_PAR) leftParCount--;
+      tempPos++;
+    }
+    tempPos = increaseWhileBlank(tempPos);
+    return input[tempPos] === symbol.LEFT_CUR;
+  };
   
   this.position = function () {
     return pos;
