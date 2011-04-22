@@ -130,6 +130,14 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
           return jazz.lang.Number.init(-primaryExpression().value);
         };
         break;
+      
+      case symbol.NOT:
+        lexer.next();
+        var primaryExpression = parsePrimaryExpression();
+        expression = function () {
+          return jazz.lang.Boolean.init(!primaryExpression().value);
+        };
+        break;
 
       default:
         expression = parsePrimaryExpression();

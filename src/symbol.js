@@ -11,6 +11,7 @@ jazz.symbol = {
   MULTIPLY: "*",
   DIVIDE: "/",
   REMAINDER: "%",
+  NOT: "!",
   DOT: ".",
   COMMA: ",",
   EOL: "\n",

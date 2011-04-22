@@ -35,6 +35,12 @@ describe("Jazz interpreter for literal expressions", function () {
     expect(console.content).toEqual("true\nfalse");
   });
   
+  it("should interpret boolean expressions with negative operator", function () {
+    jazz.execute("log !true");
+    jazz.execute("log !(1.equals(2))");
+    expect(console.content).toEqual("false\ntrue");
+  });
+  
   it("should interpret literal object definition", function () {
     jazz.execute(
       'p = { name = "john" age = 30 greet = () { log "hi!" }}\n' + 
