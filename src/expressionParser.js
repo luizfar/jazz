@@ -64,6 +64,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   
   function parseExpression() {
     switch (lexer.token) {
+      case symbol.IF:
+        return parseIf();
+      
       case symbol.CLASS:
         return classParser.parseClass();
       
@@ -75,6 +78,23 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     }
     
     return parseOrExpression();
+  }
+  
+  function parseIf () {
+    lexer.next();
+    var boolExpression = parseExpression();
+    var ifExpression = parseExpression();
+    var elseExpression = undefined;
+    if (lexer.token === symbol.ELSE) {
+      lexer.next();
+      elseExpression = parseExpression();
+    }
+    return function () {
+      if (jazz.lang.Boolean.TRUE === boolExpression()) {
+        return ifExpression();
+      }
+      return elseExpression ? elseExpression() : jazz.lang.Null.init();
+    };
   }
   
   function parseAlert() {
