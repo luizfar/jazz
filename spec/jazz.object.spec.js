@@ -48,4 +48,31 @@ describe("Jazz interpreter for Object's methods", function () {
       'log p');
     expect(console.content).toEqual("Object[Object]\np object :o)");
   });
+  
+  it("should call an object's methods", function () {
+    jazz.execute(
+      'o = {\n' +
+      '  play = () {\n' +
+      '    log "playing something"\n' +
+      '  }\n' +
+      '}\n' +
+      'o.play()\n');
+    expect(console.content).toEqual("playing something");
+  });
+  
+  it("should call an object's methods with parameters", function () {
+    jazz.execute(
+      'o = {\n' +
+      '  play = (instrument) {\n' +
+      '    log "playing the " + instrument\n' +
+      '  }\n' +
+      '}\n' +
+      'i = {\n' +
+      '  asString = () {\n' +
+      '    "harmonica"\n' +
+      '  }\n' +
+      '}\n' +
+      'o.play(i)');
+    expect(console.content).toEqual("playing the harmonica");
+  });
 });

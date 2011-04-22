@@ -6,13 +6,27 @@
     <script src="src/symbol.js"></script>
     <script src="src/symbolTable.js"></script>
     <script src="src/lexer.js"></script>
+    <script src="src/functionParser.js"></script>
     <script src="src/classParser.js"></script>
+    <script src="src/objectParser.js"></script>
     <script src="src/expressionParser.js"></script>
     <script src="src/parser.js"></script>
     <script src="src/interpreter.js"></script>
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
+      o = {
+        play = (i) {
+          log "playing the " + i
+        }
+      }
+      i = {
+        asString = () {
+          "harmonica"
+        }
+      }
+      o.play(i)
+    </script>
       p = {
         name = "john"
         age = 12
@@ -39,7 +53,6 @@
       log "-3 : " + y.add(-4).add(5).multiply(3)
       log "false : "  + (1 is 2.subtract(0))
       log "true : " + (1 is 1.1.subtract(0.1))
-    </script>
     
     <script type="text/javascript">
       jazz.run();

@@ -111,10 +111,11 @@ jazz.lang.Function.members.methods = {
     }
   }
 };
-jazz.lang.Function.init = function (name, invoke) {
+jazz.lang.Function.init = function (name, invoke, params) {
   var newFunction = jazz.lang.Object.init(jazz.lang.Function);
   newFunction.name = name;
   newFunction.invoke = invoke;
+  newFunction.params = params;
   
   return newFunction;
 }
@@ -227,6 +228,6 @@ jazz.lang.String.members.methods.equals = {
 };
 jazz.lang.String.members.methods.add = {
   invoke: function (receiver, params) {
-    return jazz.lang.String.init(receiver.value + params[0].value);
+    return jazz.lang.String.init(receiver.value + params[0].getMethod("asString").invoke(params[0]).value);
   }
 };

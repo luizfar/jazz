@@ -1,7 +1,9 @@
 var jazz = jazz || {};
 
 jazz.ExpressionParser = function (lexer, symbolTable) {
-  var classParser = new jazz.ClassParser(lexer, symbolTable, this);
+  var functionParser = new jazz.FunctionParser(lexer, symbolTable, this);
+  var classParser = new jazz.ClassParser(lexer, symbolTable, functionParser, this);
+  var objectParser = new jazz.ObjectParser(lexer, symbolTable, this);
   
   var symbol = jazz.symbol;
   var operations = jazz.operations;
@@ -48,15 +50,15 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     return expr;
   }
   
-  function createMessageSend(receiverExpression, methodName, params) {
+  function createMessageSend(receiverExpression, methodName, args) {
     return function () {
       var receiver = receiverExpression();
       var method = receiver.getMethod(methodName);
-      var paramsValues = [];
-      util.each(params, function (paramExpr) {
-        paramsValues.push(paramExpr());
+      var argsValues = [];
+      util.each(args, function (argExpr) {
+        argsValues.push(argExpr());
       });
-      return method.invoke(receiver, paramsValues);
+      return method.invoke(receiver, argsValues);
     }
   }
   
@@ -163,16 +165,16 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
   
   function parseMessageSend(receiverExpression, methodName) {
     lexer.next();
-    var params = [];
+    var args = [];
     if (lexer.token !== symbol.RIGHT_PAR) {
-      params = [parseExpression()];
+      args = [parseExpression()];
       while (lexer.token === symbol.COMMA) {
         lexer.next();
-        params.push(parseExpression());
+        args.push(parseExpression());
       }
     }
     lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
-    return createMessageSend(receiverExpression, methodName, params);
+    return createMessageSend(receiverExpression, methodName, args);
   }
   
   function parsePrimaryExpression() {
@@ -194,11 +196,11 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       return parseVariableExpression();
     }
     if (lexer.token === symbol.LEFT_CUR) {
-      return parseObjectDefinition();
+      return objectParser.parseLiteralObject();
     }
     if (lexer.token === symbol.LEFT_PAR) {
       if (lexer.isLeftCurAfterNextMatchingRightPar()) {
-        return parseAnonymousFunction();
+        return functionParser.parseAnonymousFunction();
       }
       return parseParenthesisExpression();
     }
@@ -218,51 +220,6 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     return function () {
       var variable = symbolTable.get(variableName);
       return variable.value;
-    };
-  }
-  
-  function parseObjectDefinition() {
-    lexer.next();
-    var properties = {};
-    while (lexer.token !== symbol.RIGHT_CUR) {
-      lexer.expectIdentifier();
-      var propertyName = lexer.token;
-      lexer.next();
-      lexer.checkAndConsumeToken(symbol.ASSIGN);
-      properties[propertyName] = parseExpression();
-    }
-    lexer.next();
-    return function () {
-      var object = jazz.lang.Object.init(jazz.lang.Object);
-      object.properties = properties;
-      for (property in properties) {
-        object.properties[property] = object.properties[property]();
-      }
-      return object;
-    };
-  }
-  
-  function parseAnonymousFunction() {
-    lexer.next();
-    lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
-    var _function = jazz.lang.Function.init("Object[Function]");
-    var expressions = [];
-    lexer.checkAndConsumeToken(symbol.LEFT_CUR);
-    while (lexer.token !== symbol.RIGHT_CUR) {
-      expressions.push(parseExpression());
-    }
-    lexer.next();
-    _function.invoke = function (receiver, args) {
-      symbolTable.addScope();
-      var lastValue = jazz.lang.Null.init();
-      util.each(expressions, function (expression) {
-        lastValue = expression();
-      });
-      symbolTable.removeScope();
-      return lastValue;
-    }
-    return function () {
-      return _function;
     };
   }
   

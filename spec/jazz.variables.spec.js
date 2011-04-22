@@ -4,7 +4,7 @@ describe("Jazz interpreter for variables usage", function () {
     console.clear();
   });
   
-  it("should create a new variable when there's an assignment to a variable", function () {
+  it("should create a new variable when there's an assignment", function () {
     jazz.execute(
       "a = 2\n" +
       "log a");
