@@ -13,6 +13,8 @@ jazz.symbol = {
   REMAINDER: "%",
   DOT: ".",
   COMMA: ",",
+  EOL: "\n",
+  EOE: "\\",
 
   ALERT: "alert",
   AND: "and",

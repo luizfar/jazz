@@ -6,6 +6,7 @@ jazz.Lexer = function (_input) {
   var pos = 0;
   var symbol = jazz.symbol;
   var tokenIsString = false;
+  var metEndOfExpression = false;
   
   var SIMPLE_TOKENS = [ symbol.ASSIGN, symbol.LEFT_CUR, symbol.RIGHT_CUR,
                         symbol.LEFT_PAR, symbol.RIGHT_PAR, symbol.ADD,
@@ -19,7 +20,14 @@ jazz.Lexer = function (_input) {
   }
   
   function isBlank(ch) {
-    return ch === ' ' || ch === '\n';
+    if (ch === ' ') {
+      return true;
+    }
+    if (ch === symbol.EOL || ch === symbol.EOE) {
+      metEndOfExpression = true;
+      return true;
+    }
+    return false;
   }
   
   function isValidChar(ch) {
@@ -48,6 +56,7 @@ jazz.Lexer = function (_input) {
   }
   
   this.next = function () {
+    metEndOfExpression = false;
     skipBlank();
     this.token = "";
     tokenIsString = false;
@@ -121,7 +130,12 @@ jazz.Lexer = function (_input) {
       tempPos++;
     }
     tempPos = increaseWhileBlank(tempPos);
+    metEndOfExpression = false;
     return input[tempPos] === symbol.LEFT_CUR;
+  };
+  
+  this.metEndOfExpression = function () {
+    return metEndOfExpression;
   };
   
   this.position = function () {

@@ -135,14 +135,16 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
         expression = parsePrimaryExpression();
     }
     
-    var checkForCallOrAccessor = true;
-    while (checkForCallOrAccessor) {
-      if (lexer.token === symbol.DOT) {
-        expression = parseAccessToProperty(expression);
-      } else if (lexer.token === symbol.LEFT_PAR) {
-        expression = parseFunctionCall(expression);
-      } else {
-        checkForCallOrAccessor = false;
+    if (!lexer.metEndOfExpression()) {
+      var checkForCallOrAccessor = true;
+      while (checkForCallOrAccessor) {
+        if (lexer.token === symbol.DOT) {
+          expression = parseAccessToProperty(expression);
+        } else if (lexer.token === symbol.LEFT_PAR) {
+          expression = parseFunctionCall(expression);
+        } else {
+          checkForCallOrAccessor = false;
+        }
       }
     }
     
