@@ -13,8 +13,8 @@ jazz.lang.Object = {
         }
       },
       equals: {
-        invoke: function (receiver, param) {
-          return jazz.lang.Boolean.init(receiver === param);
+        invoke: function (receiver, params) {
+          return jazz.lang.Boolean.init(receiver === params[0]);
         }
       }
     }
@@ -218,6 +218,11 @@ jazz.lang.String.init = function (params) {
 jazz.lang.String.members.methods.asString = {
   invoke: function (receiver) {
     return receiver;
+  }
+};
+jazz.lang.String.members.methods.equals = {
+  invoke: function (receiver, params) {
+    return jazz.lang.Boolean.init(receiver.value === params[0].value);
   }
 };
 jazz.lang.String.members.methods.add = {

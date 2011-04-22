@@ -9,6 +9,16 @@ describe("Jazz interpreter for literal expressions", function () {
     expect(console.content).toEqual("1");
   });
   
+  it("should interpret negative numbers expressions", function () {
+    jazz.execute("log -2");
+    expect(console.content).toEqual("-2");
+  });
+  
+  it("should interpret positive numbers with '+' expressions", function () {
+    jazz.execute("log +3");
+    expect(console.content).toEqual("3");
+  });
+  
   it("should interpret decimal number expressions", function () {
     jazz.execute("log 0.924");
     expect(console.content).toEqual("0.924");

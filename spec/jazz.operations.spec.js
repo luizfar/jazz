@@ -1,4 +1,4 @@
-describe("Jazz interpreter for math operations", function () {
+describe("Jazz interpreter for basic operations", function () {
   
   beforeEach(function () {
     console.clear();
@@ -22,6 +22,11 @@ describe("Jazz interpreter for math operations", function () {
     expect(console.content).toEqual("3");
   });
   
+  it("should interpret math operations that use the operations names", function () {
+    jazz.execute("log 3.multiply(5.subtract(2)).divide(11.subtract(4.multiply(2)))");
+    expect(console.content).toEqual("3");
+  });
+  
   it("should interpret boolean 'and' operations", function () {
     jazz.execute("log true and true");
     jazz.execute("log true and false");
@@ -36,5 +41,10 @@ describe("Jazz interpreter for math operations", function () {
     jazz.execute("log false or true");
     jazz.execute("log false or false");
     expect(console.content).toEqual("true\ntrue\ntrue\nfalse");
+  });
+  
+  it("should interpret string concatenation", function () {
+    jazz.execute('log "str" + "ing"');
+    expect(console.content).toEqual("string");
   });
 });
