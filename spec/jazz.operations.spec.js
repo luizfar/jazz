@@ -47,4 +47,10 @@ describe("Jazz interpreter for basic operations", function () {
     jazz.execute('log "str" + "ing"');
     expect(console.content).toEqual("string");
   });
+  
+  it("should convert elements to string when concatenating them to string", function () {
+    jazz.execute('log "this string has " + 25 + " characters"');
+    jazz.execute('log "is this a string? " + true');
+    expect(console.content).toEqual("this string has 25 characters\nis this a string? true");
+  });
 });
