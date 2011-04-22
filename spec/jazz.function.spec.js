@@ -21,5 +21,17 @@ describe("Jazz interpreter for Object's methods", function () {
       'f("hi")');
     expect(console.content).toEqual("hi");
   });
+  
+  it("should allow functions that return functions", function () {
+    jazz.execute(
+      'f = (param) {\n' +
+      '  log param\n' +
+      '  (anotherParam) {\n' +
+      '    log anotherParam\n' +
+      '  }\n' +
+      '}\n' +
+      'f("hey")("you")');
+    expect(console.content).toEqual("hey\nyou");
+  });
 
 });
