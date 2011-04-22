@@ -54,11 +54,7 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     return function () {
       var receiver = receiverExpression();
       var method = receiver.getMethod(methodName);
-      var argsValues = [];
-      util.each(args, function (argExpr) {
-        argsValues.push(argExpr());
-      });
-      return method.invoke(receiver, argsValues);
+      return method.invoke(receiver, evaluateArguments(args));
     }
   }
   
@@ -138,9 +134,16 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       default:
         expression = parsePrimaryExpression();
     }
-      
-    while (lexer.token === symbol.DOT) {
-      expression = parseAccessToProperty(expression);
+    
+    var checkForCallOrAccessor = true;
+    while (checkForCallOrAccessor) {
+      if (lexer.token === symbol.DOT) {
+        expression = parseAccessToProperty(expression);
+      } else if (lexer.token === symbol.LEFT_PAR) {
+        expression = parseFunctionCall(expression);
+      } else {
+        checkForCallOrAccessor = false;
+      }
     }
     
     return expression;
@@ -160,6 +163,23 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
         util.error("Object of class '" + object.clazz.name + "' has no property named '" + propertyName + "'");
       }
       return property;
+    };
+  }
+  
+  function parseFunctionCall(expression) {
+    lexer.next();
+    var args = [];
+    if (lexer.token !== symbol.RIGHT_PAR) {
+      args.push(parseExpression());
+      while (lexer.token === symbol.COMMA) {
+        lexer.next();
+        args.push(parseExpression());
+      }
+    }
+    lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
+    return function () {
+      var _function = expression();
+      return _function.invoke(jazz.lang.Null.init(), evaluateArguments(args));
     };
   }
   
@@ -230,5 +250,13 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
     return function () {
       return expression();
     };
+  }
+  
+  function evaluateArguments(arguments) {
+    var argumentsValues = [];
+    util.each(arguments, function (argument) {
+      argumentsValues.push(argument());
+    });
+    return argumentsValues;
   }
 }
