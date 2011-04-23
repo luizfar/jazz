@@ -18,4 +18,11 @@ describe("Jazz interpreter for lists usage", function () {
     jazz.execute('[1, 2, "hey!"].each((element, index) { log index + ": " + element })');
     expect(console.content).toEqual("0: 1\n1: 2\n2: hey!");
   });
+  
+  it("should allow accessing a specific position of a list", function () {
+    jazz.execute(
+      'l = [1, 2, 3]\n' +
+      'log l[2 - 1]');
+    expect(console.content).toEqual("2");
+  });
 });

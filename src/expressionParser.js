@@ -179,12 +179,20 @@ jazz.ExpressionParser = function (lexer, runtime) {
     if (!lexer.metEndOfExpression()) {
       var checkForCallOrAccessor = true;
       while (checkForCallOrAccessor) {
-        if (lexer.token === symbol.DOT) {
-          expression = parseAccessToProperty(expression);
-        } else if (lexer.token === symbol.LEFT_PAR) {
-          expression = parseFunctionCall(expression);
-        } else {
-          checkForCallOrAccessor = false;
+        switch (lexer.token) {
+          case symbol.DOT:
+            expression = parseAccessToProperty(expression);
+            break;
+          
+          case symbol.LEFT_PAR:
+            expression = parseFunctionCall(expression);
+            break;
+          
+          case symbol.LEFT_SQR:
+            expression = parseListAccess(expression);
+          
+          default:
+            checkForCallOrAccessor = false;
         }
       }
     }
@@ -226,6 +234,17 @@ jazz.ExpressionParser = function (lexer, runtime) {
     };
   }
   
+  function parseListAccess(expression) {
+    lexer.next();
+    var positionExpression = parseExpression();
+    lexer.checkAndConsumeToken(symbol.RIGHT_SQR);
+    return function () {
+      var list = expression();
+      var position = positionExpression();
+      return list.value[position.value];
+    };
+  }
+  
   function parseMessageSend(receiverExpression, methodName) {
     lexer.next();
     var args = [];
@@ -243,20 +262,20 @@ jazz.ExpressionParser = function (lexer, runtime) {
   function parsePrimaryExpression() {
     var value = lexer.token;
     
+    if (lexer.tokenIsIdentifier()) {
+      return parseVariableExpression();
+    }
     if (lexer.tokenIsNumber()) {
       next();
       return functionExpression(jazz.lang.Number.init, util.toNumber(value));
-    }
-    if (value === symbol.TRUE || value === symbol.FALSE) {
-      next();
-      return functionExpression(jazz.lang.Boolean.init, value === symbol.TRUE);
     }
     if (lexer.tokenIsString()) {
       next();
       return functionExpression(jazz.lang.String.init, value);
     }
-    if (lexer.tokenIsIdentifier()) {
-      return parseVariableExpression();
+    if (value === symbol.TRUE || value === symbol.FALSE) {
+      next();
+      return functionExpression(jazz.lang.Boolean.init, value === symbol.TRUE);
     }
     if (lexer.token === symbol.LEFT_CUR) {
       return objectParser.parseLiteralObject();
