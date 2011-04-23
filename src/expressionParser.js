@@ -278,6 +278,7 @@ jazz.ExpressionParser = function (lexer, runtime) {
       return function () {
         var variable = runtime.getOrCreate(variableName);
         variable.value = expression();
+        return variable.value;
       };
     }
     return function () {

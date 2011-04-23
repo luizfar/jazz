@@ -18,4 +18,9 @@ describe("Jazz interpreter for variables usage", function () {
       "log b";
     expect(function () { jazz.execute(code) }).toThrow("Unknown identifier: c");
   });
+  
+  it("should evaluate an assignment to the variable's value", function () {
+    jazz.execute('a = (b = 2)\nlog a');
+    expect(console.content).toEqual("2");
+  });
 });
