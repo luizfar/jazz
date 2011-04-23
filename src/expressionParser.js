@@ -261,6 +261,9 @@ jazz.ExpressionParser = function (lexer, runtime) {
     if (lexer.token === symbol.LEFT_CUR) {
       return objectParser.parseLiteralObject();
     }
+    if (lexer.token === symbol.LEFT_SQR) {
+      return parseLiteralList();
+    }
     if (lexer.token === symbol.LEFT_PAR) {
       if (lexer.isLeftCurAfterNextMatchingRightPar()) {
         return functionParser.parseAnonymousFunction();
@@ -284,6 +287,26 @@ jazz.ExpressionParser = function (lexer, runtime) {
     return function () {
       var variable = runtime.get(variableName);
       return variable.value;
+    };
+  }
+  
+  function parseLiteralList() {
+    lexer.next();
+    var listValues = [];
+    if (lexer.token !== symbol.RIGHT_SQR) {
+      listValues.push(parseExpression());
+      while (lexer.token === symbol.COMMA) {
+        lexer.next();
+        listValues.push(parseExpression());
+      }
+    }
+    lexer.checkAndConsumeToken(symbol.RIGHT_SQR);
+    return function () {
+      var list = [];
+      for (var i = 0; i < listValues.length; ++i) {
+        list.push(listValues[i]());
+      }
+      return jazz.lang.List.init(list);
     };
   }
   

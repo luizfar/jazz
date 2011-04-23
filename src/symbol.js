@@ -6,6 +6,8 @@ jazz.symbol = {
   RIGHT_PAR: ")",
   LEFT_CUR: "{",
   RIGHT_CUR: "}",
+  LEFT_SQR: "[",
+  RIGHT_SQR: "]",
   ADD: "+",
   SUBTRACT: "-",
   MULTIPLY: "*",

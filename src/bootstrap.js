@@ -231,3 +231,35 @@ jazz.lang.String.members.methods.add = {
     return jazz.lang.String.init(receiver.value + params[0].getMethod("asString").invoke(params[0]).value);
   }
 };
+
+jazz.lang.List = jazz.lang.Class.init("List");
+jazz.lang.List.init = function (params) {
+  var list = jazz.lang.Object.init(jazz.lang.List);
+  list.value = params;
+  return list;
+};
+jazz.lang.List.members.methods.asString = {
+  invoke: function (receiver) {
+    var str = "[";
+    for (var i = 0; i < receiver.value.length; ++i) {
+      if (i > 0) str += ", ";
+      var object = receiver.value[i];
+      str += object.getMethod("asString").invoke(object).value;
+    }
+    str += "]";
+    return jazz.lang.String.init(str);
+  }
+};
+jazz.lang.List.members.methods.size = {
+  invoke: function (receiver) {
+    return jazz.lang.Number.init(receiver.value.length);
+  }
+};
+jazz.lang.List.members.methods.each = {
+  invoke: function (receiver, params) {
+    var callback = params[0];
+    for (var i = 0; i < receiver.value.length; ++i) {
+      callback.invoke(jazz.lang.Null.NULL_OBJECT, [receiver.value[i], jazz.lang.Number.init(i)]);
+    }
+  }
+};

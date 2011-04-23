@@ -12,7 +12,7 @@ jazz.Lexer = function (_input) {
                         symbol.LEFT_PAR, symbol.RIGHT_PAR, symbol.ADD,
                         symbol.SUBTRACT, symbol.MULTIPLY, symbol.DIVIDE,
                         symbol.REMAINDER, symbol.COMMA, symbol.DOT,
-                        symbol.NOT];
+                        symbol.NOT, symbol.LEFT_SQR, symbol.RIGHT_SQR];
 
   this.token = '';
   
