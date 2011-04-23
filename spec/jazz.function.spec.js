@@ -1,4 +1,4 @@
-describe("Jazz interpreter for Object's methods", function () {
+describe("Jazz interpreter for functions", function () {
 
   beforeEach(function () {
     console.clear();
