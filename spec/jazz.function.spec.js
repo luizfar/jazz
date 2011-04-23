@@ -47,5 +47,45 @@ describe("Jazz interpreter for Object's methods", function () {
       'log f(false)');
     expect(console.content).toEqual("param is true\nparam is false");
   });
+  
+  it("should allow the use of internal functions", function () {
+    jazz.execute(
+      'f = (param) {\n' + 
+      '  g = (anotherParam) {\n' +
+      '    log anotherParam + " inside of g"\n' +
+      '  }\n' +
+      '  log param + " inside of f"\n' +
+      '  g("also " + param)\n' +
+      '}\n' +
+      'f("here")');
+    expect(console.content).toEqual("here inside of f\nalso here inside of g");
+  });
+  
+  it("should sign an error when outer function tries to access inner functions variables", function () {
+    var code =
+      'f = (param) {\n' +
+      '  g = (anotherParam) {\n' +
+      '    p = 1\n' +
+      '    log anotherParam + " inside of g" + p\n' +
+      '  }\n' +
+      '  g(param)\n' +
+      '  log param + " inside of f" + p\n' +
+      '}\n' +
+      'f("here")';
+    expect(function () { jazz.execute(code); }).toThrow("Unknown identifier: p");
+  });
+  
+  it("should allow inner functions to access outer functions' context", function () {
+    jazz.execute(
+      'f = (param) {\n' + 
+      '  g = () {\n' +
+      '    log param + " inside of g"\n' +
+      '  }\n' +
+      '  log param + " inside of f"\n' +
+      '  g()\n' +
+      '}\n' +
+      'f("here")');
+    expect(console.content).toEqual("here inside of f\nhere inside of g");
+  });
 
 });
