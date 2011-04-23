@@ -1,6 +1,6 @@
 var jazz = jazz || {};
 
-jazz.ObjectParser = function (lexer, symbolTable, expressionParser) {
+jazz.ObjectParser = function (lexer, runtime, expressionParser) {
   var util = jazz.util;
   var symbol = jazz.symbol;
   

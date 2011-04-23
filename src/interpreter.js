@@ -3,10 +3,10 @@ var jazz = jazz || {};
 jazz.Interpreter = function (input) {
 
   var lexer = new jazz.Lexer(input);
-  var symbolTable = new jazz.SymbolTable();
-  var parser = new jazz.Parser(lexer, symbolTable);
+  var runtime = new jazz.Runtime();
+  var parser = new jazz.Parser(lexer, runtime);
   
-  symbolTable.addClass(jazz.lang.Class);
+  runtime.addClass(jazz.lang.Class);
   
   this.start = function () {
     lexer.next();

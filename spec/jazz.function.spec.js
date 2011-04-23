@@ -33,5 +33,19 @@ describe("Jazz interpreter for Object's methods", function () {
       'f("hey")("you")');
     expect(console.content).toEqual("hey\nyou");
   });
+  
+  it("should return from a function when a return statement is executed", function () {
+    jazz.execute(
+      'f = (param) {\n' + 
+      '  if param\n' +
+      '    return "param is true"\n' +
+      '  else\n' +
+      '    return "param is false"\n' +
+      '  log "not here"\n' +
+      '}\n' +
+      'log f(true)\n' +
+      'log f(false)');
+    expect(console.content).toEqual("param is true\nparam is false");
+  });
 
 });

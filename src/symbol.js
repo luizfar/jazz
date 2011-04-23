@@ -29,7 +29,8 @@ jazz.symbol = {
   LOG: "log",
   OR: "or",
   TRUE: "true",
-  FALSE: "false"
+  FALSE: "false",
+  RETURN: "return"
 };
 
 (function () {

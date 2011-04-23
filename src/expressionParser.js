@@ -1,9 +1,9 @@
 var jazz = jazz || {};
 
-jazz.ExpressionParser = function (lexer, symbolTable) {
-  var functionParser = new jazz.FunctionParser(lexer, symbolTable, this);
-  var classParser = new jazz.ClassParser(lexer, symbolTable, functionParser, this);
-  var objectParser = new jazz.ObjectParser(lexer, symbolTable, this);
+jazz.ExpressionParser = function (lexer, runtime) {
+  var functionParser = new jazz.FunctionParser(lexer, runtime, this);
+  var classParser = new jazz.ClassParser(lexer, runtime, functionParser, this);
+  var objectParser = new jazz.ObjectParser(lexer, runtime, this);
   
   var symbol = jazz.symbol;
   var operations = jazz.operations;
@@ -67,6 +67,9 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       case symbol.IF:
         return parseIf();
       
+      case symbol.RETURN:
+        return parseReturn();
+      
       case symbol.CLASS:
         return classParser.parseClass();
       
@@ -94,6 +97,16 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
         return ifExpression();
       }
       return elseExpression ? elseExpression() : jazz.lang.Null.init();
+    };
+  }
+  
+  function parseReturn () {
+    lexer.next();
+    var expression = parseExpression();
+    return function () {
+      var returnValue = expression();
+      runtime.clearExpressions();
+      return returnValue;
     };
   }
   
@@ -263,12 +276,12 @@ jazz.ExpressionParser = function (lexer, symbolTable) {
       lexer.next();
       var expression = parseExpression();
       return function () {
-        var variable = symbolTable.getOrCreate(variableName);
+        var variable = runtime.getOrCreate(variableName);
         variable.value = expression();
       };
     }
     return function () {
-      var variable = symbolTable.get(variableName);
+      var variable = runtime.get(variableName);
       return variable.value;
     };
   }

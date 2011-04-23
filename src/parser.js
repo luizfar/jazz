@@ -1,7 +1,7 @@
 var jazz = jazz || {};
 
-jazz.Parser = function (lexer, symbolTable) {
-  var exprParser = new jazz.ExpressionParser(lexer, symbolTable);
+jazz.Parser = function (lexer, runtime) {
+  var exprParser = new jazz.ExpressionParser(lexer, runtime);
   
   this.start = function () {
     do {

@@ -1,6 +1,6 @@
 var jazz = jazz || {};
 
-jazz.ClassParser = function (lexer, symbolTable, functionParser, exprParser) {  
+jazz.ClassParser = function (lexer, runtime, functionParser, exprParser) {  
   var util = jazz.util;
   var symbol = jazz.symbol;
   
@@ -16,7 +16,7 @@ jazz.ClassParser = function (lexer, symbolTable, functionParser, exprParser) {
     }
     lexer.checkAndConsumeToken(symbol.RIGHT_CUR);
     return function () {
-      symbolTable.addClass(clazz);
+      runtime.addClass(clazz);
     }
   };
 }

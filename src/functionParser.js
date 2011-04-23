@@ -1,6 +1,6 @@
 var jazz = jazz || {};
 
-jazz.FunctionParser = function (lexer, symbolTable, expressionParser) {
+jazz.FunctionParser = function (lexer, runtime, expressionParser) {
   var util = jazz.util;
   var symbol = jazz.symbol;
   
@@ -43,19 +43,22 @@ jazz.FunctionParser = function (lexer, symbolTable, expressionParser) {
     }
     lexer.next();
     _function.invoke = function (receiver, args) {
-      symbolTable.addScope();
+      runtime.addContext();
       util.each(_function.params, function (param, index) {
-        symbolTable.add({
+        runtime.add({
           name: param,
-          value: typeof args[index] !== "undefined" ? args[index] : jazz.lang.Null.init()
+          value: typeof args[index] !== "undefined" ? args[index] : jazz.lang.Null.NULL_OBJECT
         });
       });
-      var lastValue = jazz.lang.Null.init();
-      util.each(this.expressions, function (expression) {
-        lastValue = expression();
-      });
-      symbolTable.removeScope();
-      return lastValue;
+      var returnValue = jazz.lang.Null.NULL_OBJECT;
+      runtime.setExpressions(_function.expressions);
+      var expression = runtime.removeExpression();
+      while (expression) {
+        returnValue = expression();
+        expression = runtime.removeExpression();
+      }
+      runtime.removeContext();
+      return returnValue;
     }
     return _function;
   }

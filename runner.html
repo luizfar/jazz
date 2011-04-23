@@ -2,9 +2,9 @@
   <head>
     <script src="lib/jquery.min.js"></script>
     <script src="src/bootstrap.js"></script>
+    <script src="src/runtime.js"></script>
     <script src="src/util.js"></script>
     <script src="src/symbol.js"></script>
-    <script src="src/symbolTable.js"></script>
     <script src="src/lexer.js"></script>
     <script src="src/functionParser.js"></script>
     <script src="src/classParser.js"></script>
@@ -15,11 +15,17 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
-      x = 2
-      if x is 3
-        log "=="
-      log "done"
+      f = (param) {
+        if param
+          return "param is true"
+        else
+          return "param is false"
+        log "not here"
+      }
+      log f(true)
+      log f(false)
     </script>
+      
       x = 1 + 1
       y = x * 2 - 3 * 2
       log "-3 : " + y.add(-4).add(5).multiply(3)
