@@ -15,7 +15,7 @@ describe("Jazz interpreter for null values", function () {
       'y = "hey!"\n' + 
       'log x.isNull()\n' +
       'log y.isNull()\n' +
-      'log 1.isNull());
+      'log 1.isNull()');
     expect(console.content).toEqual("true\nfalse\nfalse");
   });
 });

@@ -75,4 +75,33 @@ describe("Jazz interpreter for Object's methods", function () {
       'o.play(i)');
     expect(console.content).toEqual("playing the harmonica");
   });
+  
+  it("should allow assignment to objects' properties", function () {
+    jazz.execute(
+      'o = {\n' +
+       '  property = 1\n' +
+       '}\n' +
+       'o.property = 2\n' +
+       'log o.property');
+     expect(console.content).toEqual("2");
+  });
+  
+  it("should allow assignment to an object's new property", function () {
+    jazz.execute(
+      'o = {\n' +
+       '  property = 1\n' +
+       '}\n' +
+       'o.anotherProperty = 2\n' +
+       'log o.anotherProperty');
+     expect(console.content).toEqual("2");
+  });
+  
+  it("should not allow accessing an objet's property if it is undefined", function () {
+    var code =
+      'o = {\n' +
+       '  property = 1\n' +
+       '}\n' +
+       'log o.anotherProperty';
+     expect(function () { jazz.execute(code); }).toThrow("Object of class 'Object' has no property named 'anotherProperty'");
+  });
 });

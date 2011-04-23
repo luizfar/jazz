@@ -9,7 +9,7 @@ jazz.Runtime = function () {
   
   function emptyContext() {
     return {
-      variables: {},
+      properties: {},
       expressions: [],
       exprIndex: undefined
     };
@@ -24,25 +24,25 @@ jazz.Runtime = function () {
   };
   
   this.add = function (variable) {
-    if (currentContext.variables[variable.name]) {
+    if (currentContext.properties[variable.name]) {
       jazz.util.error("Identifier '" + variable.name + "' already in use.");
     } else {
-      currentContext.variables[variable.name] = variable;
+      currentContext.properties[variable.name] = variable;
     }
   };
   
   this.getOrCreate = function (variableName) {
-    var variable = currentContext.variables[variableName];
+    var variable = currentContext.properties[variableName];
     if (!variable) {
       variable = { name: variableName, value: jazz.lang.Null.init() };
-      currentContext.variables[variableName] = variable;
+      currentContext.properties[variableName] = variable;
     }
     return variable;
-  }
+  };
   
   this.get = function (identifier) {
     for (var i = contextIndex; i >= 0; --i) {
-      var variable = contexts[i].variables[identifier];
+      var variable = contexts[i].properties[identifier];
       if (variable) {
         return variable;
       }
@@ -61,7 +61,7 @@ jazz.Runtime = function () {
   
   this.clearExpressions = function () {
     currentContext.exprIndex = currentContext.expressions.length;
-  }
+  };
   
   this.addContext = function () {
     currentContext = emptyContext();

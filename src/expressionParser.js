@@ -9,7 +9,11 @@ jazz.ExpressionParser = function (lexer, runtime) {
   var operations = jazz.operations;
   var util = jazz.util;
   var lang = jazz.lang;
-
+  
+  var NULL_EXPRESSION = function () {
+    return jazz.lang.Null.NULL_OBJECT;
+  };
+  
   var OR_OPERATOR = [symbol.OR];
   var OR_OPERATION = ["or"];
   var AND_OPERATOR = [symbol.AND];
@@ -207,6 +211,16 @@ jazz.ExpressionParser = function (lexer, runtime) {
     if (lexer.token === symbol.LEFT_PAR) {
       return parseMessageSend(expression, propertyName);
     }
+    if (lexer.token === symbol.ASSIGN) {
+      lexer.next();
+      var rexpression = parseExpression();
+      return function () {
+        var object = expression();
+        var rvalue = rexpression();
+        object.properties[propertyName] = rvalue;
+        return rvalue;
+      };
+    }
     return function () {
       var object = expression();
       var property = object.properties[propertyName];
@@ -295,10 +309,6 @@ jazz.ExpressionParser = function (lexer, runtime) {
     }
   }
   
-  var NULL_EXPRESSION = function () {
-    return jazz.lang.Null.NULL_OBJECT;
-  };
-  
   function parseVariableExpression() {
     var variableName = lexer.token;
     lexer.next();
@@ -353,4 +363,5 @@ jazz.ExpressionParser = function (lexer, runtime) {
     });
     return argumentsValues;
   }
+  
 }
