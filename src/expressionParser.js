@@ -289,7 +289,15 @@ jazz.ExpressionParser = function (lexer, runtime) {
       }
       return parseParenthesisExpression();
     }
+    if (lexer.token === symbol.NULL) {
+      lexer.next();
+      return NULL_EXPRESSION;
+    }
   }
+  
+  var NULL_EXPRESSION = function () {
+    return jazz.lang.Null.NULL_OBJECT;
+  };
   
   function parseVariableExpression() {
     var variableName = lexer.token;

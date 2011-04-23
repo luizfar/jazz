@@ -32,7 +32,8 @@ jazz.symbol = {
   OR: "or",
   TRUE: "true",
   FALSE: "false",
-  RETURN: "return"
+  RETURN: "return",
+  NULL: "null"
 };
 
 (function () {

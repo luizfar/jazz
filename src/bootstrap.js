@@ -16,6 +16,11 @@ jazz.lang.Object = {
         invoke: function (receiver, params) {
           return jazz.lang.Boolean.init(receiver === params[0]);
         }
+      },
+      isNull: {
+        invoke: function (receiver) {
+          return jazz.lang.Boolean.init(receiver === jazz.lang.Null.NULL_OBJECT);
+        }
       }
     }
   },
