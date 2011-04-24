@@ -3,6 +3,11 @@ describe("Jazz interpreter for Object's methods", function () {
   beforeEach(function () {
     console.clear();
   });
+  
+  it("should allow creating an empty object", function () {
+    jazz.execute("log {}");
+    expect(console.content).toEqual("Object[Object]");
+  });
 
   it("should have asString", function () {
     jazz.execute(

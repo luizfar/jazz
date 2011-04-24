@@ -33,4 +33,17 @@ describe("Jazz interpreter for lists usage", function () {
       'log l');
     expect(console.content).toEqual("[1, 5, 3]");
   });
+  
+  it("should allow lists of lists", function () {
+    jazz.execute(
+      'l = [[1, 2, 3], ["4", "5", "6"], [{ answer = 42}]]\n' +
+      'log l\n' +
+      'l[1][1] = "x"\n' +
+      'log l[1]\n' +
+      'log l[0][2]');
+    expect(console.content).toEqual(
+      '[[1, 2, 3], [4, 5, 6], [Object[Object]]]\n' +
+      '[4, x, 6]\n' +
+      '3');
+  });
 });

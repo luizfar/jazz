@@ -194,6 +194,7 @@ jazz.ExpressionParser = function (lexer, runtime) {
           
           case symbol.LEFT_SQR:
             expression = parseListAccess(expression);
+            break;
           
           default:
             checkForCallOrAccessor = false;
