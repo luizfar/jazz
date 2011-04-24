@@ -252,6 +252,17 @@ jazz.ExpressionParser = function (lexer, runtime) {
     lexer.next();
     var positionExpression = parseExpression();
     lexer.checkAndConsumeToken(symbol.RIGHT_SQR);
+    if (lexer.token === symbol.ASSIGN) {
+      lexer.next();
+      var rexpression = parseExpression();
+      return function () {
+        var list = expression();
+        var position = positionExpression();
+        var rvalue = rexpression();
+        list.value[position.value] = rvalue;
+        return rvalue;
+      };
+    }
     return function () {
       var list = expression();
       var position = positionExpression();

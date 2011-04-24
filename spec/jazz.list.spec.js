@@ -25,4 +25,12 @@ describe("Jazz interpreter for lists usage", function () {
       'log l[2 - 1]');
     expect(console.content).toEqual("2");
   });
+  
+  it("should allow assigning a value to a list element", function () {
+    jazz.execute(
+      'l = [1, 2, 3]\n' +
+      'l[-1 - -2 * 1] = 5\n' +
+      'log l');
+    expect(console.content).toEqual("[1, 5, 3]");
+  });
 });
