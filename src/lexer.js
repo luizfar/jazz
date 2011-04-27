@@ -59,6 +59,8 @@ jazz.Lexer = function (_input) {
   this.next = function () {
     metEndOfExpression = false;
     skipBlank();
+    var eoi = this.eoi();
+    metEndOfExpression = metEndOfExpression || eoi;
     this.token = "";
     tokenIsString = false;
 
@@ -87,7 +89,7 @@ jazz.Lexer = function (_input) {
       return;
     }
     
-    if (!this.eoi() && isValidChar(input[pos])) {
+    if (!eoi && isValidChar(input[pos])) {
       this.token += input[pos++];
       while (!this.eoi() && (isValidChar(input[pos]) || isNumber(input[pos]))) {
         this.token += input[pos++];

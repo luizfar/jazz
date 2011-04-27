@@ -43,7 +43,7 @@ describe("Jazz interpreter for literal expressions", function () {
   
   it("should interpret literal object definition", function () {
     jazz.execute(
-      'p = { name = "john" age = 30 greet = () { log "hi!" }}\n' + 
+      'p = { name = "john"; age = 30; greet = () { log "hi!" }}\n' + 
       'log p.name\n' + 
       'log p.age\n' + 
       'p.greet()');

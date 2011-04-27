@@ -5,7 +5,11 @@ jazz.Parser = function (lexer, runtime) {
   
   this.start = function () {
     do {
-      exprParser.parseExpressionEvaluator()();
+      var evaluator = exprParser.parseExpressionEvaluator();
+      if (!lexer.metEndOfExpression()) {
+        jazz.util.error("'" + jazz.symbol.EOE + "' or end of line expected");
+      }
+      evaluator();
     } while (!lexer.eoi());
   }
 }

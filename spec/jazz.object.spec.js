@@ -24,8 +24,8 @@ describe("Jazz interpreter for Object's methods", function () {
       'log 1.equals(2)\n' + 
       'log "x".equals("x")\n' +
       'log "str".equals("s" + "tr")\n' +
-      'log -1.equals(2 * -1 + 1)' +
-      'log true.equals(1.equals(1))' +
+      'log -1.equals(2 * -1 + 1);' +
+      'log true.equals(1.equals(1));' +
       'log true.equals(1.equals(-1))');
     expect(console.content).toEqual("true\nfalse\ntrue\ntrue\ntrue\ntrue\nfalse");
   });

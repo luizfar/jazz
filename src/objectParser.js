@@ -13,6 +13,9 @@ jazz.ObjectParser = function (lexer, runtime, expressionParser) {
       lexer.next();
       lexer.checkAndConsumeToken(symbol.ASSIGN);
       objectProperties[propertyName] = expressionParser.parseExpressionEvaluator();
+      if (lexer.token !== symbol.RIGHT_CUR && !lexer.metEndOfExpression()) {
+        jazz.util.error("'" + jazz.symbol.EOE + "' or end of line expected");
+      }
     }
     lexer.checkAndConsumeToken(symbol.RIGHT_CUR);
     return function () {

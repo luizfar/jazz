@@ -39,7 +39,7 @@ jazz.lang.Object = {
         if (!method) {
           method = newObject.clazz.getMemberMethod(identifier);
           if (!method) {
-            jazz.util.error("Object of class '" + clazz.name + "' has no method named '" + identifier + "'.");
+            jazz.util.error("Object of class '" + clazz.name + "' has no method named '" + identifier + "'");
           }
         }
         return method;
