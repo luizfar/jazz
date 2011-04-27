@@ -15,13 +15,24 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
-      class Person {
-        def greet() {
-          log "hi"
+      person = (_name) {
+        priv = () {
+          log "ha!"
+        }
+        
+        {
+          name = _name
+          talk = () {
+            priv()
+            log "hihi"
+            log "my name is " + name
+          }
         }
       }
-      p = Person.new()
-      p.greet()
+      
+      p = person("bruno")
+      p.talk()
+      
     </script>
       f = () {
         x = 1

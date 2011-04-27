@@ -52,6 +52,7 @@ jazz.FunctionParser = function (lexer, runtime, expressionParser) {
     functionParentContext = _function.context.parent;
     
     _function.invoke = function (receiver, args) {
+      var callingContext = runtime.currentContext;
       runtime.currentContext = _function.context;
       util.each(_function.params, function (param, index) {
         runtime.currentContext.add({
@@ -66,7 +67,7 @@ jazz.FunctionParser = function (lexer, runtime, expressionParser) {
         returnValue = expression();
         expression = runtime.currentContext.removeExpression();
       }
-      runtime.currentContext = _function.context.parent;
+      runtime.currentContext = callingContext;
       return returnValue;
     }
     return _function;

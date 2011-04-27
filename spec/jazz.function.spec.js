@@ -111,5 +111,34 @@ describe("Jazz interpreter for functions", function () {
       'f()');
     expect(console.content).toEqual("1\n2");
   });
+  
+  it("should return to the function's caller's context", function () {
+    var code =
+      'f = () {\n' +
+      '  x = 1\n' +
+      '  () {\n' +
+      '    log x\n' +
+      '  }\n' +
+      '}\n' +
+      'k = f()\n' +
+      'log x';
+    expect(function () { jazz.execute(code); }).toThrow("Unknown identifier: x");
+  });
+  
+  it("should return to the function's caller's context - more levels", function () {
+    jazz.execute(
+      'f = () {\n' +
+      '  g = () {\n' +
+      '    log 2\n' +
+      '  }\n' +
+      '  h = () {\n' +
+      '    g()\n' +
+      '    log 3\n' +
+      '  }\n' +
+      '}\n' +
+      'f()()\n' +
+      'log 4');
+    expect(console.content).toEqual("2\n3\n4");
+  });
 
 });
