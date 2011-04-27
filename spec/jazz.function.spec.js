@@ -87,5 +87,29 @@ describe("Jazz interpreter for functions", function () {
       'f("here")');
     expect(console.content).toEqual("here inside of f\nhere inside of g");
   });
+  
+  it("should allow inner functions to access outer functions' context when it is called externally", function () {
+    jazz.execute(
+      'f = () {\n' +
+      '  x = 12\n' +
+      '  g = () {\n' +
+      '    log x\n' +
+      '  }\n' +
+      '}\n' +
+      'k = f()\n' +
+      'k()');
+    expect(console.content).toEqual("12");
+  });
+  
+  it("should allow inner functions to change an outer function's variable", function () {
+    jazz.execute(
+      'f = () {\n' +
+      '  x = 1; log x\n' +
+      '  g = () { x = 2 }\n' +
+      '  g(); log x\n' +
+      '}\n' +
+      'f()');
+    expect(console.content).toEqual("1\n2");
+  });
 
 });

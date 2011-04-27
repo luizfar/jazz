@@ -109,7 +109,7 @@ jazz.ExpressionParser = function (lexer, runtime) {
     var expression = parseExpression();
     return function () {
       var returnValue = expression();
-      runtime.clearExpressions();
+      runtime.currentContext.clearExpressions();
       return returnValue;
     };
   }
@@ -328,13 +328,13 @@ jazz.ExpressionParser = function (lexer, runtime) {
       lexer.next();
       var expression = parseExpression();
       return function () {
-        var variable = runtime.getOrCreate(variableName);
+        var variable = runtime.currentContext.getOrCreate(variableName);
         variable.value = expression();
         return variable.value;
       };
     }
     return function () {
-      var variable = runtime.get(variableName);
+      var variable = runtime.currentContext.get(variableName);
       return variable.value;
     };
   }

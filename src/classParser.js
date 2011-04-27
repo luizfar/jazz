@@ -16,7 +16,7 @@ jazz.ClassParser = function (lexer, runtime, functionParser, exprParser) {
     }
     lexer.checkAndConsumeToken(symbol.RIGHT_CUR);
     return function () {
-      runtime.addClass(clazz);
+      runtime.currentContext.addClass(clazz);
     }
   };
 }

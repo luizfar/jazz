@@ -4,6 +4,8 @@ jazz.FunctionParser = function (lexer, runtime, expressionParser) {
   var util = jazz.util;
   var symbol = jazz.symbol;
   
+  var functionParentContext = runtime.GLOBAL_CONTEXT;
+  
   this.parseMethod = function () {
     lexer.checkAndConsumeToken(symbol.DEF);
     lexer.expectIdentifier();
@@ -36,28 +38,35 @@ jazz.FunctionParser = function (lexer, runtime, expressionParser) {
       lexer.checkAndConsumeToken(symbol.RIGHT_PAR);
     }
     
+    _function.context = runtime.newContext();
+    _function.context.parent = functionParentContext;
+    functionParentContext = _function.context;
+    
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     _function.expressions = [];
     while (lexer.token !== symbol.RIGHT_CUR) {
       _function.expressions.push(expressionParser.parseExpressionEvaluator());
     }
     lexer.next();
+    
+    functionParentContext = _function.context.parent;
+    
     _function.invoke = function (receiver, args) {
-      runtime.addContext();
+      runtime.currentContext = _function.context;
       util.each(_function.params, function (param, index) {
-        runtime.add({
+        runtime.currentContext.add({
           name: param,
           value: typeof args[index] !== "undefined" ? args[index] : jazz.lang.Null.NULL_OBJECT
         });
       });
       var returnValue = jazz.lang.Null.NULL_OBJECT;
-      runtime.setExpressions(_function.expressions);
-      var expression = runtime.removeExpression();
+      runtime.currentContext.setExpressions(_function.expressions);
+      var expression = runtime.currentContext.removeExpression();
       while (expression) {
         returnValue = expression();
-        expression = runtime.removeExpression();
+        expression = runtime.currentContext.removeExpression();
       }
-      runtime.removeContext();
+      runtime.currentContext = _function.context.parent;
       return returnValue;
     }
     return _function;

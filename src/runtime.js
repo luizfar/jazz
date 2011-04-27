@@ -1,75 +1,74 @@
 var jazz = jazz || {};
 
 jazz.Runtime = function () {
-  var contexts = [];
-  var contextIndex = 0;
-  var currentContext = emptyContext();
-  
-  contexts[contextIndex] = currentContext;
-  
-  function emptyContext() {
-    return {
-      properties: {},
-      expressions: [],
-      exprIndex: undefined
+  function Context() {
+    this.properties = {};
+    this.expressions = [];
+    this.exprIndex = 0;
+    
+    this.addClass = function(clazz) {
+      this.add({
+        type: jazz.lang.Class,
+        value: clazz,
+        name: clazz.name
+      });
+    };
+    
+    this.add = function (variable) {
+      this.properties[variable.name] = variable;
+    };
+    
+    this.getOrCreate = function (variableName) {
+      var variable = this.tryToGet(variableName);
+      if (!variable) {
+        variable = { name: variableName, value: jazz.lang.Null.init() };
+        this.properties[variableName] = variable;
+      }
+      return variable;
+    };
+    
+    this.tryToGet = function (identifier) {
+      return this.properties[identifier] || (this.parent && this.parent.tryToGet(identifier));
+    };
+    
+    this.get = function (identifier) {
+      var variable = this.tryToGet(identifier);
+      if (!variable) {
+        jazz.util.error("Unknown identifier: " + identifier);
+      }
+      return variable;
+    };
+    
+    this.setExpressions = function (expressions) {
+      this.expressions = expressions;
+      this.exprIndex = 0;
+    };
+    
+    this.removeExpression = function () {
+      return this.expressions[this.exprIndex++];
+    };
+    
+    this.clearExpressions = function () {
+      this.exprIndex = this.expressions.length;
     };
   }
   
-  this.addClass = function(clazz) {
-    this.add({
-      type: jazz.lang.Class,
-      value: clazz,
-      name: clazz.name
-    });
-  };
-  
-  this.add = function (variable) {
-    if (currentContext.properties[variable.name]) {
-      jazz.util.error("Identifier '" + variable.name + "' already in use.");
-    } else {
-      currentContext.properties[variable.name] = variable;
-    }
-  };
-  
-  this.getOrCreate = function (variableName) {
-    var variable = currentContext.properties[variableName];
-    if (!variable) {
-      variable = { name: variableName, value: jazz.lang.Null.init() };
-      currentContext.properties[variableName] = variable;
-    }
-    return variable;
-  };
-  
-  this.get = function (identifier) {
-    for (var i = contextIndex; i >= 0; --i) {
-      var variable = contexts[i].properties[identifier];
-      if (variable) {
-        return variable;
-      }
-    }
-    jazz.util.error("Unknown identifier: " + identifier);
-  };
-  
-  this.setExpressions = function (expressions) {
-    currentContext.expressions = expressions;
-    currentContext.exprIndex = 0;
-  };
-  
-  this.removeExpression = function () {
-    return currentContext.expressions[currentContext.exprIndex++];
-  };
-  
-  this.clearExpressions = function () {
-    currentContext.exprIndex = currentContext.expressions.length;
-  };
+  this.GLOBAL_CONTEXT = new Context();
+  this.currentContext = this.GLOBAL_CONTEXT;
   
   this.addContext = function () {
-    currentContext = emptyContext();
-    contexts[++contextIndex] = currentContext;
+    var newContext = this.newContext();
+    newContext.parent = this.currentContext;
+    this.currentContext = newContext;
   };
   
   this.removeContext = function () {
-    currentContext = contexts[--contextIndex];
-    delete contexts[contextIndex + 1];
+    var oldContext = this.currentContext;
+    this.currentContext = this.currentContext.parent;
+    oldContext = null;
+  };
+  
+  this.newContext = function () {
+    return new Context();
   };
 }

@@ -6,7 +6,7 @@ jazz.Interpreter = function (input) {
   var runtime = new jazz.Runtime();
   var parser = new jazz.Parser(lexer, runtime);
   
-  runtime.addClass(jazz.lang.Class);
+  runtime.currentContext.addClass(jazz.lang.Class);
   
   this.start = function () {
     lexer.next();
