@@ -18,6 +18,10 @@ jazz.Runtime = function () {
       this.properties[variable.name] = variable;
     };
     
+    this.tryToGet = function (identifier) {
+      return this.properties[identifier] || (this.parent && this.parent.tryToGet(identifier));
+    };
+    
     this.getOrCreate = function (variableName) {
       var variable = this.tryToGet(variableName);
       if (!variable) {
@@ -25,10 +29,6 @@ jazz.Runtime = function () {
         this.properties[variableName] = variable;
       }
       return variable;
-    };
-    
-    this.tryToGet = function (identifier) {
-      return this.properties[identifier] || (this.parent && this.parent.tryToGet(identifier));
     };
     
     this.get = function (identifier) {
@@ -55,18 +55,6 @@ jazz.Runtime = function () {
   
   this.GLOBAL_CONTEXT = new Context();
   this.currentContext = this.GLOBAL_CONTEXT;
-  
-  this.addContext = function () {
-    var newContext = this.newContext();
-    newContext.parent = this.currentContext;
-    this.currentContext = newContext;
-  };
-  
-  this.removeContext = function () {
-    var oldContext = this.currentContext;
-    this.currentContext = this.currentContext.parent;
-    oldContext = null;
-  };
   
   this.newContext = function () {
     return new Context();

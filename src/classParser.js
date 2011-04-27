@@ -12,7 +12,7 @@ jazz.ClassParser = function (lexer, runtime, functionParser, exprParser) {
     lexer.checkAndConsumeToken(symbol.LEFT_CUR);
     while (lexer.token === symbol.DEF) {
       var method = functionParser.parseMethod();
-      clazz.methods[method.name] = method;
+      clazz.members.methods[method.name] = method;
     }
     lexer.checkAndConsumeToken(symbol.RIGHT_CUR);
     return function () {

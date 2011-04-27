@@ -15,9 +15,13 @@
     <script src="src/jazz.js"></script>
     
     <script type="jazz">
-      f = (x) {}
-      f(1)
-      f(2)
+      class Person {
+        def greet() {
+          log "hi"
+        }
+      }
+      p = Person.new()
+      p.greet()
     </script>
       f = () {
         x = 1
